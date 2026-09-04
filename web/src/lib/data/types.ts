@@ -36,6 +36,29 @@ export type RetainerStatus = (typeof RETAINER_STATUSES)[number];
 export const PHASE_SUBSTATES = ["bridge", "domain-trigger"] as const;
 export type PhaseSubstate = (typeof PHASE_SUBSTATES)[number];
 
+export const EVENT_KINDS = [
+  "note",
+  "touch",
+  "ascension-signal",
+  "phase-change",
+  "system",
+] as const;
+export type EventKind = (typeof EVENT_KINDS)[number];
+
+/** The kinds a person can add by hand; phase-change / system are written by the app. */
+export const USER_EVENT_KINDS = ["note", "touch", "ascension-signal"] as const;
+export type UserEventKind = (typeof USER_EVENT_KINDS)[number];
+
+export type ClientEvent = {
+  id: string;
+  clientId: string;
+  at: string; // ISO timestamp
+  kind: EventKind;
+  body: string;
+  resolvedAt: string | null; // ascension-signal: null = still open
+  createdAt: string;
+};
+
 export type Client = {
   id: string;
   slug: string;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mapClientRow } from "@/lib/data/mappers";
+import { mapClientEventRow, mapClientRow } from "@/lib/data/mappers";
 
 /** A row shaped exactly as `select('*')` from `clients` returns it. */
 const dbRow = {
@@ -81,5 +81,36 @@ describe("mapClientRow", () => {
     const c = mapClientRow({ ...dbRow, checkin_landed: true, nothing_asked_since_delivery: true });
     expect(c.checkinLanded).toBe(true);
     expect(c.nothingAskedSinceDelivery).toBe(true);
+  });
+});
+
+describe("mapClientEventRow", () => {
+  const eventRow = {
+    id: "e1",
+    client_id: "c1",
+    at: "2026-09-04T10:00:00+00:00",
+    kind: "ascension-signal",
+    body: "asked about Google",
+    resolved_at: null,
+    created_at: "2026-09-04T10:00:00+00:00",
+  };
+
+  it("renames keys to camelCase, values unchanged", () => {
+    expect(mapClientEventRow(eventRow)).toEqual({
+      id: "e1",
+      clientId: "c1",
+      at: "2026-09-04T10:00:00+00:00",
+      kind: "ascension-signal",
+      body: "asked about Google",
+      resolvedAt: null,
+      createdAt: "2026-09-04T10:00:00+00:00",
+    });
+  });
+
+  it("carries a resolved timestamp through", () => {
+    expect(
+      mapClientEventRow({ ...eventRow, resolved_at: "2026-09-10T00:00:00+00:00" })
+        .resolvedAt,
+    ).toBe("2026-09-10T00:00:00+00:00");
   });
 });

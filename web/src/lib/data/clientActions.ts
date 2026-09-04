@@ -8,16 +8,11 @@ import {
   deleteClient,
   updateClient,
 } from "@/lib/data/clients";
-import { parseClientForm, ValidationError } from "@/lib/data/clientInput";
+import { parseClientForm } from "@/lib/data/clientInput";
 import { parsePhaseForm } from "@/lib/data/phaseInput";
+import { messageFor, type FormState } from "@/lib/data/errors";
 
-export type FormState = { ok?: boolean; error?: string };
-
-function messageFor(err: unknown): string {
-  if (err instanceof ValidationError) return err.message;
-  if (err instanceof Error) return err.message;
-  return "Something went wrong.";
-}
+export type { FormState };
 
 export async function createClientAction(
   _prev: FormState,
