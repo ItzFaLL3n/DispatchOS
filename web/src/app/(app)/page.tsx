@@ -1,21 +1,99 @@
+import Link from "next/link";
+import { listClients } from "@/lib/data/clients";
+import { serverEnv } from "@/lib/env";
+import {
+  BOARD_COLUMNS,
+  boardCardHint,
+  conversionColumn,
+  type BoardColumn,
+} from "@/lib/derive/board";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
+import { ContactWindow } from "@/components/ContactWindow";
+import type { Client } from "@/lib/data/types";
 
-/**
- * Dashboard. The conversion board and nags land in tickets 09 and 11; ticket 01
- * ships the shell with this placeholder body.
- */
-export default function DashboardPage() {
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage() {
+  const clients = await listClients();
+  const operatorTz = serverEnv.operatorTz;
+  const now = new Date();
+
+  const inBuild = clients.filter((c) => c.buildStatus !== "delivered");
+  const byColumn = new Map<BoardColumn, Client[]>(
+    BOARD_COLUMNS.map((col) => [col.key, []]),
+  );
+  for (const c of clients) {
+    if (c.buildStatus !== "delivered") continue;
+    byColumn.get(conversionColumn(c).column)?.push(c);
+  }
+
   return (
     <>
       <PageHeader
         formNo="000"
         title="Dashboard"
-        sub="The conversion board — delivered clients by where they sit in the post-delivery sequence — lands in a later slice. Right now this is the ported shell."
+        sub="Delivered clients by where they sit in the post-delivery sequence. Clients still in build sit in the strip below."
       />
-      <Panel title="Conversion board">
-        <div className="empty-state">Coming in ticket 09.</div>
-      </Panel>
+
+      <div className="board">
+        {BOARD_COLUMNS.map((col) => {
+          const items = byColumn.get(col.key) ?? [];
+          return (
+            <div key={col.key} className="board-col">
+              <div className="board-col-head">
+                <span>{col.label}</span>
+                <span className="board-col-count">{items.length}</span>
+              </div>
+              {items.length === 0 ? (
+                <div className="board-col-empty">—</div>
+              ) : (
+                items.map((c) => {
+                  const { dataWarning } = conversionColumn(c);
+                  return (
+                    <Link
+                      key={c.id}
+                      href={`/clients/${c.id}`}
+                      className="board-card"
+                    >
+                      <div className="board-card-name">
+                        {c.businessName}
+                        {dataWarning ? (
+                          <span
+                            className="board-warn"
+                            title="delivered but phase is below 8"
+                          >
+                            !
+                          </span>
+                        ) : null}
+                      </div>
+                      <ContactWindow
+                        variant="inline"
+                        timezone={c.timezone}
+                        operatorTz={operatorTz}
+                      />
+                      <div className="board-card-hint">{boardCardHint(c, now)}</div>
+                    </Link>
+                  );
+                })
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {inBuild.length > 0 ? (
+        <Panel title={`In build (${inBuild.length})`} className="stack-panel-top">
+          <div className="inbuild-strip">
+            {inBuild.map((c) => (
+              <Link key={c.id} href={`/clients/${c.id}`} className="inbuild-chip">
+                <span>{c.businessName}</span>
+                <span className="inbuild-phase">P{c.phase}</span>
+              </Link>
+            ))}
+          </div>
+        </Panel>
+      ) : null}
     </>
   );
 }

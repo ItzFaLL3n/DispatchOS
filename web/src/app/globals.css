@@ -823,6 +823,114 @@ textarea {
   white-space: pre-wrap;
 }
 
+/* --- Conversion board --------------------------------------------------------- */
+.board {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.board-col {
+  flex: 0 0 200px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 10px;
+}
+.board-col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+}
+.board-col-count {
+  background: var(--card);
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  padding: 1px 7px;
+}
+.board-col-empty {
+  color: var(--ink-faint);
+  font-size: 12px;
+  text-align: center;
+  padding: 8px 0;
+}
+.board-card {
+  display: block;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 9px 10px;
+  margin-bottom: 8px;
+  box-shadow: var(--shadow-card);
+  text-decoration: none;
+  color: var(--ink);
+}
+.board-card:hover {
+  border-color: var(--line-strong);
+}
+.board-card-name {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.board-warn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin-left: 6px;
+  border: 1.3px solid var(--bad);
+  border-radius: 3px;
+  color: var(--bad);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+.board-card-hint {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-faint);
+  margin-top: 5px;
+  line-height: 1.4;
+}
+.stack-panel-top {
+  margin-top: 16px;
+}
+.inbuild-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.inbuild-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  font-size: 12.5px;
+  text-decoration: none;
+  color: var(--ink);
+  background: var(--card);
+}
+.inbuild-chip:hover {
+  background: var(--paper-hover);
+}
+.inbuild-phase {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-faint);
+}
+
 @media (max-width: 768px) {
   .mobile-menu-btn {
     display: flex;

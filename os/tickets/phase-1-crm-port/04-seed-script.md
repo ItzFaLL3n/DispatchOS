@@ -30,3 +30,5 @@ repeatedly without creating duplicates.
 - [ ] Test: run seed twice against the throwaway schema; assert six clients and
       their history events after the first run, and no duplicates after the
       second.
+
+**Impl note (from ticket 09):** PostgREST multi-row inserts with non-uniform keys send explicit NULLs instead of using column defaults. Insert clients one at a time, or build every row object with the same key set.
