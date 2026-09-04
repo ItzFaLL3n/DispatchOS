@@ -7,20 +7,20 @@ detection and the timeline honest.
 
 **Blocked by:** 05.
 
-**Status:** ready-for-agent
+**Status:** done - verified live (phase move, delivered side-effects, event + cascade)
 
-- [ ] Phase is settable to 1–10; `phase_substate` is settable to `bridge` (only
+- [x] Phase is settable to 1–10; `phase_substate` is settable to `bridge` (only
       meaningful at phase 8) or `domain-trigger` (only at phase 9) or null, and
       the UI only offers a sub-state where it applies.
-- [ ] `next_action_at` (date) and `next_action_note` (short text) are settable
+- [x] `next_action_at` (date) and `next_action_note` (short text) are settable
       together.
-- [ ] `do_not_pitch_until` (date) is settable and clearable.
-- [ ] `build_status` is settable; moving it to `delivered` sets `delivered_at`
+- [x] `do_not_pitch_until` (date) is settable and clearable.
+- [x] `build_status` is settable; moving it to `delivered` sets `delivered_at`
       to today if it is null.
-- [ ] Any change to `phase` or `phase_substate` stamps `phase_updated_at` to
+- [x] Any change to `phase` or `phase_substate` stamps `phase_updated_at` to
       now and appends a `phase-change` `client_event` describing the change.
-- [ ] Moving to `delivered` appends a `system` `client_event`.
-- [ ] Tests: changing phase moves `phase_updated_at` and creates a
+- [x] Moving to `delivered` appends a `system` `client_event`.
+- [x] Tests: changing phase moves `phase_updated_at` and creates a
       `phase-change` event; setting `build_status = delivered` sets
       `delivered_at` and creates a `system` event; a no-op save creates no
       event.

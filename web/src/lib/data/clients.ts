@@ -2,7 +2,9 @@ import "server-only";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { snakeizeKeys } from "@/lib/data/camelize";
 import { mapClientRow } from "@/lib/data/mappers";
+import { computePhaseUpdate } from "@/lib/data/phaseUpdate";
 import type { ParsedClientForm } from "@/lib/data/clientInput";
+import type { PhasePatch } from "@/lib/data/phaseInput";
 import type { Client } from "@/lib/data/types";
 
 const SELECT = "*";
@@ -71,4 +73,41 @@ export async function updateClient(
 export async function deleteClient(id: string): Promise<void> {
   const { error } = await getSupabaseAdmin().from("clients").delete().eq("id", id);
   if (error) throw new Error(`deleteClient(${id}): ${error.message}`);
+}
+
+/**
+ * Apply a phase / sequence-state patch with its bookkeeping (see
+ * computePhaseUpdate). The client update and the event inserts are sequential,
+ * not a single transaction — acceptable for a single-user tool; a failed event
+ * insert surfaces as an error and can be retried.
+ */
+export async function applyPhaseUpdate(
+  id: string,
+  patch: PhasePatch,
+): Promise<Client> {
+  const current = await getClient(id);
+  if (!current) throw new Error(`applyPhaseUpdate(${id}): not found`);
+
+  const { update, events } = computePhaseUpdate(current, patch, new Date());
+  if (Object.keys(update).length === 0) return current;
+
+  const { data, error } = await getSupabaseAdmin()
+    .from("clients")
+    .update(update)
+    .eq("id", id)
+    .select(SELECT)
+    .single();
+  if (error) throw new Error(`applyPhaseUpdate(${id}): ${error.message}`);
+
+  if (events.length > 0) {
+    const rows = events.map((e) => ({ client_id: id, kind: e.kind, body: e.body }));
+    const { error: evError } = await getSupabaseAdmin()
+      .from("client_events")
+      .insert(rows);
+    if (evError) {
+      throw new Error(`applyPhaseUpdate(${id}) events: ${evError.message}`);
+    }
+  }
+
+  return mapClientRow(data as Record<string, unknown>);
 }
