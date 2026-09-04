@@ -696,6 +696,57 @@ textarea {
   color: var(--good);
 }
 
+/* --- Contact window --------------------------------------------------------- */
+.record-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.cw,
+.cw-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+.cw-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.cw-dot-green {
+  background: var(--good);
+}
+.cw-dot-amber {
+  background: var(--warn);
+}
+.cw-dot-red {
+  background: var(--bad);
+}
+.cw-time {
+  color: var(--ink);
+}
+.cw-you,
+.cw-opens {
+  color: var(--ink-faint);
+}
+.cw-hours {
+  color: var(--accent);
+  border-left: 1px solid var(--line-strong);
+  padding-left: 6px;
+}
+.cw-muted,
+.cw-placeholder {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+}
+
 @media (max-width: 768px) {
   .mobile-menu-btn {
     display: flex;

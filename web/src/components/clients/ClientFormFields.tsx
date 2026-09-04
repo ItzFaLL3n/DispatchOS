@@ -5,6 +5,7 @@ import {
   RETAINER_STATUSES,
 } from "@/lib/data/types";
 import type { Client } from "@/lib/data/types";
+import { TIMEZONES } from "@/lib/timezones";
 
 /**
  * The editable client fields, shared by the "new client" form and the record
@@ -102,18 +103,25 @@ export function ClientFormFields({ client }: { client?: Client }) {
 
       <div className="field-row">
         <div className="field">
-          <label htmlFor="timezone">Timezone (IANA)</label>
-          <input
-            id="timezone"
-            name="timezone"
-            type="text"
-            placeholder="America/Chicago"
-            defaultValue={v(client?.timezone)}
-          />
+          <label htmlFor="timezone">Timezone</label>
+          <select id="timezone" name="timezone" defaultValue={v(client?.timezone)}>
+            <option value="">— none —</option>
+            {TIMEZONES.map((tz) => (
+              <option key={tz} value={tz}>
+                {tz}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="field">
           <label htmlFor="contactHours">Contact hours note</label>
-          <input id="contactHours" name="contactHours" type="text" defaultValue={v(client?.contactHours)} />
+          <input
+            id="contactHours"
+            name="contactHours"
+            type="text"
+            placeholder="e.g. evenings only"
+            defaultValue={v(client?.contactHours)}
+          />
         </div>
       </div>
 

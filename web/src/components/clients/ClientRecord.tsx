@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import { updateClientAction, type FormState } from "@/lib/data/clientActions";
 import { ClientFormFields } from "@/components/clients/ClientFormFields";
+import { ContactWindow } from "@/components/ContactWindow";
 import { Button } from "@/components/ui/Button";
 import { Stamp } from "@/components/ui/Stamp";
 import { BUILD_TONE, RETAINER_TONE } from "@/lib/clientDisplay";
@@ -19,7 +20,13 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 
 const dash = (s: string | null) => (s && s.trim() !== "" ? s : "—");
 
-export function ClientRecord({ client }: { client: Client }) {
+export function ClientRecord({
+  client,
+  operatorTz,
+}: {
+  client: Client;
+  operatorTz: string;
+}) {
   const [editing, setEditing] = useState(false);
   const [state, formAction, pending] = useActionState<FormState, FormData>(
     updateClientAction,
@@ -63,7 +70,12 @@ export function ClientRecord({ client }: { client: Client }) {
 
   return (
     <>
-      <div className="btn-row record-toolbar">
+      <div className="record-topline">
+        <ContactWindow
+          timezone={client.timezone}
+          contactHours={client.contactHours}
+          operatorTz={operatorTz}
+        />
         <Button variant="primary" size="sm" onClick={() => setEditing(true)}>
           Edit
         </Button>

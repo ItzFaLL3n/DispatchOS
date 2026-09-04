@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getClient } from "@/lib/data/clients";
+import { serverEnv } from "@/lib/env";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 import { ClientRecord } from "@/components/clients/ClientRecord";
@@ -17,6 +18,7 @@ export default async function ClientDetailPage({
   const { id } = await params;
   const client = await getClient(id);
   if (!client) notFound();
+  const operatorTz = serverEnv.operatorTz;
 
   return (
     <>
@@ -41,7 +43,7 @@ export default async function ClientDetailPage({
         title="Record"
         actions={<DeleteClientButton id={client.id} name={client.businessName} />}
       >
-        <ClientRecord client={client} />
+        <ClientRecord client={client} operatorTz={operatorTz} />
       </Panel>
     </>
   );

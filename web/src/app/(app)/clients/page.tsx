@@ -1,15 +1,18 @@
 import Link from "next/link";
 import { listClients } from "@/lib/data/clients";
+import { serverEnv } from "@/lib/env";
 import { RETAINER_TONE } from "@/lib/clientDisplay";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 import { Stamp } from "@/components/ui/Stamp";
+import { ContactWindow } from "@/components/ContactWindow";
 
 // Reads live pipeline data — never prerender.
 export const dynamic = "force-dynamic";
 
 export default async function ClientsPage() {
   const clients = await listClients();
+  const operatorTz = serverEnv.operatorTz;
 
   return (
     <>
@@ -37,6 +40,7 @@ export default async function ClientsPage() {
               <tr>
                 <th>Business</th>
                 <th>Contact</th>
+                <th>Their time</th>
                 <th>Phase</th>
                 <th>Retainer</th>
               </tr>
@@ -48,6 +52,13 @@ export default async function ClientsPage() {
                     <Link href={`/clients/${c.id}`}>{c.businessName}</Link>
                   </td>
                   <td>{c.contactName ?? "—"}</td>
+                  <td>
+                    <ContactWindow
+                      variant="inline"
+                      timezone={c.timezone}
+                      operatorTz={operatorTz}
+                    />
+                  </td>
                   <td>
                     {c.phase}
                     {c.phaseSubstate ? ` · ${c.phaseSubstate}` : ""}
