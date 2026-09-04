@@ -42,6 +42,7 @@ export const EVENT_KINDS = [
   "ascension-signal",
   "phase-change",
   "system",
+  "ai-action",
 ] as const;
 export type EventKind = (typeof EVENT_KINDS)[number];
 
@@ -94,7 +95,7 @@ export type Group = {
   createdAt: string;
 };
 
-export const AGENT_RUN_KINDS = ["post", "dm", "audit", "build", "recon"] as const;
+export const AGENT_RUN_KINDS = ["post", "dm", "audit", "build", "recon", "assistant"] as const;
 export type AgentRunKind = (typeof AGENT_RUN_KINDS)[number];
 
 export type AgentRun = {
@@ -106,6 +107,18 @@ export type AgentRun = {
   tokensIn: number | null;
   tokensOut: number | null;
   model: string | null;
+  createdAt: string;
+};
+
+export const ASSISTANT_MESSAGE_ROLES = ["user", "assistant"] as const;
+export type AssistantMessageRole = (typeof ASSISTANT_MESSAGE_ROLES)[number];
+
+export type AssistantMessage = {
+  id: string;
+  clientId: string | null;
+  role: AssistantMessageRole;
+  content: string;
+  proposedActions: unknown;
   createdAt: string;
 };
 

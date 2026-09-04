@@ -16,7 +16,8 @@ EXISTS`, so re-running is safe.
 
 | File | What it does |
 |---|---|
-| `migrations/0001_phase1_init.sql` | All six Phase 1 tables: `clients`, `groups`, `client_events`, `todos`, `posts` (unused until Phase 4), `agent_runs` (unused until Phase 2). RLS off by design. |
+| `migrations/0001_phase1_init.sql` | All six Phase 1 tables: `clients`, `groups`, `client_events`, `todos`, `posts` (unused until Creator gets a save/schedule step), `agent_runs` (used starting Phase 2). RLS off by design. |
+| `migrations/0002_phase3_assistant.sql` | `client_events.kind` + `agent_runs.kind` gain `'ai-action'`/`'assistant'`; new `assistant_messages` table. Additive only. |
 
 ## Seeding
 

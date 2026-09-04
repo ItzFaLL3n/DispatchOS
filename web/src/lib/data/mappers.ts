@@ -1,5 +1,12 @@
 import { camelizeKeys } from "@/lib/data/camelize";
-import type { AgentRun, Client, ClientEvent, Group, Todo } from "@/lib/data/types";
+import type {
+  AgentRun,
+  AssistantMessage,
+  Client,
+  ClientEvent,
+  Group,
+  Todo,
+} from "@/lib/data/types";
 
 /**
  * Row → domain object. Mostly a key rename (see camelize), plus the few
@@ -28,4 +35,8 @@ export function mapGroupRow(row: Record<string, unknown>): Group {
 
 export function mapAgentRunRow(row: Record<string, unknown>): AgentRun {
   return camelizeKeys<AgentRun>(row);
+}
+
+export function mapAssistantMessageRow(row: Record<string, unknown>): AssistantMessage {
+  return camelizeKeys<AssistantMessage>(row);
 }

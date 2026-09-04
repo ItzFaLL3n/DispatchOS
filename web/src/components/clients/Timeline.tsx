@@ -13,6 +13,7 @@ const KIND_LABEL: Record<EventKind, string> = {
   "ascension-signal": "Ascension signal",
   "phase-change": "Phase change",
   system: "System",
+  "ai-action": "AI action",
 };
 
 function formatWhen(iso: string, tz: string): string {
