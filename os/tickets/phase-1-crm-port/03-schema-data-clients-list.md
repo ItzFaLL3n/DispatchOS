@@ -7,7 +7,7 @@ the database (business name, contact name, phase, retainer status).
 
 **Blocked by:** 01, 02.
 
-**Status:** code done - migration + live check pending operator
+**Status:** done - migration applied, /clients verified live (empty-state) against real Supabase
 
 - [x] A migration creates every Phase 1 table with the columns and enum-valued
       text fields from the spec's schema block: `clients` (incl. `slug` unique,
