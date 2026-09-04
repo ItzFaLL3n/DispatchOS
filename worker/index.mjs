@@ -1,6 +1,7 @@
 import http from "node:http";
 import { query, tool, createSdkMcpServer } from "@anthropic-ai/claude-agent-sdk";
 import { z } from "zod";
+import { CHAT_SYSTEM_PROMPT, DM_MODE_SYSTEM_PROMPT } from "./prompts.mjs";
 
 /**
  * Dispatch OS's CRM-assistant worker (spec 0003). Deploys separately from
@@ -155,28 +156,6 @@ const ACTION_BUILDERS = {
   }),
 };
 
-const SYSTEM_PROMPT = `You are the CRM assistant inside Dispatch OS, a solo operator's personal client-pipeline tool for a web agency (junk removal / hauling clients).
-
-You are headless — there is no human watching you work turn by turn, only reading your final reply. Never describe a plan and stop. Call the tools you need immediately, in this same turn, then answer using their results. "Let me pull..." / "I'll check..." followed by nothing is a failure — if you find yourself writing that, call the tool instead of describing it.
-
-You can read the CRM through your search_clients / get_client / list_groups / list_open_todos tools — always check real data before answering, never guess at a client's state.
-
-A client's "phase" is an integer 1-10 from Dispatch OS's own intake playbook, NOT a generic sales-pipeline stage — never translate it into a generic label like "prospect" or "lead". The legend:
-1 confirm & kick off · 2 services + contact info · 3 photos & socials ·
-4 site preferences · 5 domain check · 6 mid-build check-in ·
-7 delivery · 8 zero-ask check-in (post-delivery; phaseSubstate "bridge"
-means waiting for a client-driven door before ever pitching a retainer) ·
-9 retainer offer (phaseSubstate "domain-trigger" means the client raised
-domain/hosting unprompted — a real signal, not a reason to skip the gate) ·
-10 growth system upgrade. When reporting a client's phase, state the number
-and what it means in one short phrase — don't invent different vocabulary.
-
-You can suggest changes through propose_client_update / propose_create_todo / propose_create_client_event, but these tools only ever QUEUE a proposal — they never apply anything. Never tell the operator a change has been made. Say what you're proposing and why, then let the operator (or their auto-mode setting) decide.
-
-Never suggest pitching a retainer, or any next action, to a client whose doNotPitchUntil date hasn't passed yet — that field is a hard block the operator relies on you to respect absolutely.
-
-Be direct and concise. This is an internal operating tool, not a customer-facing chat — skip the pleasantries.`;
-
 function buildPrompt(clientId, history, message) {
   const lines = [];
   if (clientId) {
@@ -191,7 +170,7 @@ function buildPrompt(clientId, history, message) {
   return lines.join("\n\n");
 }
 
-async function handleMessage({ clientId, history, message }) {
+async function handleMessage({ clientId, history, message, mode }) {
   const proposedActions = [];
   let reply = "";
   let model = null;
@@ -203,7 +182,10 @@ async function handleMessage({ clientId, history, message }) {
     options: {
       tools: [],
       mcpServers: { crm: crmServer },
-      systemPrompt: { type: "custom", prompt: SYSTEM_PROMPT },
+      systemPrompt: {
+        type: "custom",
+        prompt: mode === "dm" ? DM_MODE_SYSTEM_PROMPT : CHAT_SYSTEM_PROMPT,
+      },
       permissionMode: "bypassPermissions",
       allowDangerouslySkipPermissions: true,
       // SDK isolation mode — this worker must never inherit CLAUDE.md, skills,

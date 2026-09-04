@@ -6,7 +6,12 @@ import { classifyAction } from "@/lib/assistant/guardrail";
 import { applyAction } from "@/lib/assistant/applyAction";
 import type { ProposedAction } from "@/lib/assistant/guardrail";
 
-type RequestBody = { clientId: string | null; message: string; autoMode: boolean };
+type RequestBody = {
+  clientId: string | null;
+  message: string;
+  autoMode: boolean;
+  mode?: "chat" | "dm";
+};
 
 function isValidBody(body: unknown): body is RequestBody {
   const b = body as Partial<RequestBody> | null;
@@ -14,6 +19,7 @@ function isValidBody(body: unknown): body is RequestBody {
   if (b.clientId !== null && typeof b.clientId !== "string") return false;
   if (typeof b.message !== "string" || !b.message.trim()) return false;
   if (typeof b.autoMode !== "boolean") return false;
+  if (b.mode !== undefined && b.mode !== "chat" && b.mode !== "dm") return false;
   return true;
 }
 
@@ -51,6 +57,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       clientId: body.clientId,
       history: prior.map((m) => ({ role: m.role, content: m.content })),
       message: body.message,
+      mode: body.mode ?? "chat",
     });
   } catch {
     return NextResponse.json({ error: "Assistant call failed." }, { status: 502 });

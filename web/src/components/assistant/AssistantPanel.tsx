@@ -63,6 +63,7 @@ export function AssistantPanel({
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [autoMode, setAutoMode] = useState(false);
+  const [mode, setMode] = useState<"chat" | "dm">("chat");
   const [error, setError] = useState<string | null>(null);
   const [resolvedKeys, setResolvedKeys] = useState<Set<string>>(new Set());
 
@@ -107,7 +108,7 @@ export function AssistantPanel({
       const res = await fetch("/api/assistant/message", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ clientId, message: text, autoMode }),
+        body: JSON.stringify({ clientId, message: text, autoMode, mode }),
       });
       if (!res.ok) throw new Error("request failed");
       const data = (await res.json()) as { reply: string; actions: ResolvedAction[] };
@@ -178,6 +179,25 @@ export function AssistantPanel({
           </div>
         </div>
 
+        <div className="assistant-mode-row">
+          <div className="toggle-group">
+            <button
+              type="button"
+              className={`toggle-opt ${mode === "chat" ? "active" : ""}`}
+              onClick={() => setMode("chat")}
+            >
+              Chat
+            </button>
+            <button
+              type="button"
+              className={`toggle-opt ${mode === "dm" ? "active" : ""}`}
+              onClick={() => setMode("dm")}
+            >
+              DM thread
+            </button>
+          </div>
+        </div>
+
         <div className="assistant-messages">
           {loading ? <div className="empty-state">Loading…</div> : null}
           {!loading && messages.length === 0 ? (
@@ -227,8 +247,12 @@ export function AssistantPanel({
                 handleSend();
               }
             }}
-            placeholder="Ask about this client, or paste a DM thread…"
-            rows={2}
+            placeholder={
+              mode === "dm"
+                ? "Paste the DM thread — the assistant will draft the next reply."
+                : "Ask about this client…"
+            }
+            rows={mode === "dm" ? 6 : 2}
           />
           <Button variant="primary" onClick={handleSend} disabled={sending || !input.trim()}>
             {sending ? "…" : "Send"}

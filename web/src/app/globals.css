@@ -1367,6 +1367,10 @@ textarea {
 .assistant-close:hover {
   color: var(--ink);
 }
+.assistant-mode-row {
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--line);
+}
 .assistant-messages {
   flex: 1;
   overflow-y: auto;

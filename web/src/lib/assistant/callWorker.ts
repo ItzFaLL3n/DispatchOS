@@ -17,6 +17,7 @@ export async function callWorker(input: {
   clientId: string | null;
   history: WorkerHistoryEntry[];
   message: string;
+  mode: "chat" | "dm";
 }): Promise<WorkerCallResult> {
   const res = await fetch(`${serverEnv.assistantWorkerUrl}/assistant/message`, {
     method: "POST",
