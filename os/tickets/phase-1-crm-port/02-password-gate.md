@@ -7,18 +7,18 @@ across visits and devices; a sign-out action drops the session.
 
 **Blocked by:** 01.
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] A login page accepts a password and checks it against `APP_PASSWORD`
+- [x] A login page accepts a password and checks it against `APP_PASSWORD`
       server-side.
-- [ ] On success, a signed httpOnly `session` cookie is set (HMAC via
+- [x] On success, a signed httpOnly `session` cookie is set (HMAC via
       `APP_SESSION_SECRET`); on failure, a plain "wrong password" message, no
       lockout.
-- [ ] Middleware guards every route except the login page and static assets;
+- [x] Middleware guards every route except the login page and static assets;
       an unauthenticated request to any other route redirects to login.
-- [ ] A tampered or absent cookie is treated as unauthenticated.
-- [ ] A sign-out control clears the cookie and returns to login.
-- [ ] The session persists across browser restarts (cookie max-age set, not
+- [x] A tampered or absent cookie is treated as unauthenticated.
+- [x] A sign-out control clears the cookie and returns to login.
+- [x] The session persists across browser restarts (cookie max-age set, not
       session-only) so the phone stays logged in.
-- [ ] Test: a request with no `session` cookie to a protected route is
+- [x] Test: a request with no `session` cookie to a protected route is
       rejected by the middleware; a request with a validly signed cookie passes.

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV_GROUPS } from "@/lib/nav";
+import { logoutAction } from "@/lib/authActions";
 
 function isActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
@@ -53,9 +54,16 @@ export function Sidebar({
       </nav>
 
       <div className="sidebar-footer">
-        2 spots · honest terms
-        <br />
-        no bait-and-switch
+        <form action={logoutAction}>
+          <button type="submit" className="sidebar-signout">
+            Sign out
+          </button>
+        </form>
+        <div className="sidebar-tagline">
+          2 spots · honest terms
+          <br />
+          no bait-and-switch
+        </div>
       </div>
     </aside>
   );

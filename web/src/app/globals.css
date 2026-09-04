@@ -583,6 +583,49 @@ textarea {
   transform: translateX(-50%) translateY(0);
 }
 
+/* --- Login ---------------------------------------------------------------- */
+.login-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.login-inner {
+  width: 100%;
+  max-width: 380px;
+}
+.form-error {
+  color: var(--bad);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.03em;
+  margin: -4px 0 12px;
+}
+
+/* --- Sidebar sign-out --------------------------------------------------------- */
+.sidebar-signout {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rail-text);
+  background: transparent;
+  border: 1px solid var(--rail-line);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  cursor: pointer;
+  width: 100%;
+  transition: color 0.12s ease, border-color 0.12s ease;
+}
+.sidebar-signout:hover {
+  color: var(--rail-text-active);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+.sidebar-tagline {
+  margin-top: 10px;
+}
+
 @media (max-width: 768px) {
   .mobile-menu-btn {
     display: flex;
