@@ -626,6 +626,61 @@ textarea {
   margin-top: 10px;
 }
 
+/* --- Client record ------------------------------------------------------------ */
+.record-toolbar {
+  margin-bottom: 16px;
+}
+.record-view {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 0;
+}
+.record-row {
+  display: contents;
+}
+.record-row > .record-label,
+.record-row > .record-value {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.record-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.record-value {
+  color: var(--ink);
+}
+.record-brief {
+  margin-top: 20px;
+}
+.brief-md {
+  margin-top: 8px;
+  padding: 14px 16px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+.modal p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 0;
+}
+.modal-actions {
+  margin-top: 18px;
+  justify-content: flex-end;
+}
+
 @media (max-width: 768px) {
   .mobile-menu-btn {
     display: flex;

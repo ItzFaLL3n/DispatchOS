@@ -1,19 +1,12 @@
+import Link from "next/link";
 import { listClients } from "@/lib/data/clients";
-import type { RetainerStatus } from "@/lib/data/types";
+import { RETAINER_TONE } from "@/lib/clientDisplay";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
-import { Stamp, type StampTone } from "@/components/ui/Stamp";
+import { Stamp } from "@/components/ui/Stamp";
 
 // Reads live pipeline data — never prerender.
 export const dynamic = "force-dynamic";
-
-const RETAINER_TONE: Record<RetainerStatus, StampTone> = {
-  "not-pitched": "neutral",
-  pitched: "info",
-  deferred: "warn",
-  active: "good",
-  declined: "bad",
-};
 
 export default async function ClientsPage() {
   const clients = await listClients();
@@ -23,13 +16,20 @@ export default async function ClientsPage() {
       <PageHeader
         formNo="001"
         title="Clients"
-        sub="Every prospect and client in the pipeline. Editing, phase tracking, and the timeline come in later slices."
+        sub="Every prospect and client in the pipeline. Phase tracking and the timeline come in later slices."
       />
-      <Panel title={`${clients.length} client${clients.length === 1 ? "" : "s"}`}>
+      <Panel
+        title={`${clients.length} client${clients.length === 1 ? "" : "s"}`}
+        actions={
+          <Link href="/clients/new" className="btn btn-primary btn-sm">
+            New client
+          </Link>
+        }
+      >
         {clients.length === 0 ? (
           <div className="empty-state">
             No clients yet. Run <code>pnpm seed</code> to load the real pipeline
-            (ticket 04).
+            (ticket 04), or add one with “New client”.
           </div>
         ) : (
           <table className="table">
@@ -44,7 +44,9 @@ export default async function ClientsPage() {
             <tbody>
               {clients.map((c) => (
                 <tr key={c.id}>
-                  <td>{c.businessName}</td>
+                  <td>
+                    <Link href={`/clients/${c.id}`}>{c.businessName}</Link>
+                  </td>
                   <td>{c.contactName ?? "—"}</td>
                   <td>
                     {c.phase}

@@ -17,3 +17,18 @@ export function camelizeKeys<T = Record<string, unknown>>(
   }
   return out as T;
 }
+
+export function camelToSnake(key: string): string {
+  return key.replace(/[A-Z]/g, (ch) => `_${ch.toLowerCase()}`);
+}
+
+/** camelCase object → snake_case, for writing back to Supabase. */
+export function snakeizeKeys(
+  obj: Record<string, unknown>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    out[camelToSnake(key)] = value;
+  }
+  return out;
+}

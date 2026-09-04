@@ -1,22 +1,40 @@
 /**
  * Camelcase domain types for the Phase 1 tables. The canonical schema is
  * web/supabase/migrations/0001_phase1_init.sql — keep these in sync with it.
+ * The `*_VALUES` arrays are the single source for both <select> options and
+ * input validation.
  */
 
-export type ClientSource = "fb-comment" | "fb-dm" | "fb-post-reply" | "other";
-export type OfferType =
-  | "free-website"
-  | "free-review-agent"
-  | "both"
-  | "direct-pitch";
-export type BuildStatus = "not-started" | "in-progress" | "delivered";
-export type RetainerStatus =
-  | "not-pitched"
-  | "pitched"
-  | "deferred"
-  | "active"
-  | "declined";
-export type PhaseSubstate = "bridge" | "domain-trigger";
+export const CLIENT_SOURCES = [
+  "fb-comment",
+  "fb-dm",
+  "fb-post-reply",
+  "other",
+] as const;
+export type ClientSource = (typeof CLIENT_SOURCES)[number];
+
+export const OFFER_TYPES = [
+  "free-website",
+  "free-review-agent",
+  "both",
+  "direct-pitch",
+] as const;
+export type OfferType = (typeof OFFER_TYPES)[number];
+
+export const BUILD_STATUSES = ["not-started", "in-progress", "delivered"] as const;
+export type BuildStatus = (typeof BUILD_STATUSES)[number];
+
+export const RETAINER_STATUSES = [
+  "not-pitched",
+  "pitched",
+  "deferred",
+  "active",
+  "declined",
+] as const;
+export type RetainerStatus = (typeof RETAINER_STATUSES)[number];
+
+export const PHASE_SUBSTATES = ["bridge", "domain-trigger"] as const;
+export type PhaseSubstate = (typeof PHASE_SUBSTATES)[number];
 
 export type Client = {
   id: string;
