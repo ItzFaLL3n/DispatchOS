@@ -94,6 +94,21 @@ export type Group = {
   createdAt: string;
 };
 
+export const AGENT_RUN_KINDS = ["post", "dm", "audit", "build", "recon"] as const;
+export type AgentRunKind = (typeof AGENT_RUN_KINDS)[number];
+
+export type AgentRun = {
+  id: string;
+  kind: AgentRunKind;
+  clientId: string | null;
+  input: unknown;
+  output: unknown;
+  tokensIn: number | null;
+  tokensOut: number | null;
+  model: string | null;
+  createdAt: string;
+};
+
 export type Client = {
   id: string;
   slug: string;

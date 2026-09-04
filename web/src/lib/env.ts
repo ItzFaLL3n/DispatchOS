@@ -29,6 +29,9 @@ export const serverEnv = {
   get appSessionSecret() {
     return required("APP_SESSION_SECRET");
   },
+  get anthropicApiKey() {
+    return required("ANTHROPIC_API_KEY");
+  },
   /** Operator's own timezone for the client-local clock. Defaults to IST. */
   get operatorTz() {
     return process.env.OPERATOR_TZ || "Asia/Kolkata";
