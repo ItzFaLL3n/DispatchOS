@@ -84,7 +84,7 @@ create table if not exists todos (
   created_at timestamptz not null default now()
 );
 
--- posts (table created, unused until Phase 4) --------------------------------
+-- posts (table created, unused until Creator gets a save/schedule step) ------
 create table if not exists posts (
   id             uuid primary key default gen_random_uuid(),
   client_id      uuid references clients(id) on delete set null,
@@ -99,7 +99,7 @@ create table if not exists posts (
   created_at     timestamptz not null default now()
 );
 
--- agent_runs (table created, unused until Phase 2) --------------------------
+-- agent_runs (used starting Phase 2 - post generator) ------------------------
 create table if not exists agent_runs (
   id         uuid primary key default gen_random_uuid(),
   kind       text not null check (kind in ('post','dm','audit','build','recon')),
