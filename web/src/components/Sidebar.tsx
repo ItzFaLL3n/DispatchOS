@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV_GROUPS } from "@/lib/nav";
 import { logoutAction } from "@/lib/authActions";
+import { AssistantIcon } from "@/components/icons";
 
 function isActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
@@ -13,9 +14,11 @@ function isActive(pathname: string, href: string): boolean {
 export function Sidebar({
   open,
   onNavigate,
+  onOpenAssistant,
 }: {
   open: boolean;
   onNavigate: () => void;
+  onOpenAssistant: () => void;
 }) {
   const pathname = usePathname();
 
@@ -54,6 +57,10 @@ export function Sidebar({
       </nav>
 
       <div className="sidebar-footer">
+        <button type="button" className="sidebar-assistant-btn" onClick={onOpenAssistant}>
+          <AssistantIcon />
+          <span>Assistant</span>
+        </button>
         <form action={logoutAction}>
           <button type="submit" className="sidebar-signout">
             Sign out

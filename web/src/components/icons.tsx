@@ -93,6 +93,15 @@ export function PlaybookIcon(props: IconProps) {
   );
 }
 
+export function AssistantIcon(props: IconProps) {
+  return (
+    <svg {...base} strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M2.5 5.5c0-1.1.9-2 2-2h11c1.1 0 2 .9 2 2v6c0 1.1-.9 2-2 2H8l-3.5 3v-3H4.5c-1.1 0-2-.9-2-2z" />
+      <path d="M6.5 8h7M6.5 10.5h4.5" />
+    </svg>
+  );
+}
+
 export function MenuIcon(props: IconProps) {
   return (
     <svg {...base} strokeLinecap="round" {...props}>
