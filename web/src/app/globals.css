@@ -1169,6 +1169,51 @@ textarea {
   font-size: 11px;
 }
 
+/* --- Groups --------------------------------------------------------------------- */
+.group-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+.group-form .field {
+  margin-bottom: 0;
+}
+.group-name-field {
+  flex: 1 1 200px;
+}
+.group-notes-field {
+  flex: 1 1 100%;
+}
+.group-create {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 14px;
+}
+.group-listing {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.group-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.group-item:last-child {
+  border-bottom: none;
+}
+.group-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+.group-row-actions {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
 @media (max-width: 768px) {
   .mobile-menu-btn {
     display: flex;
