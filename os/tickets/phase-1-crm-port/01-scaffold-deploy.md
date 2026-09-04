@@ -10,7 +10,7 @@ env vars. The app is deployed to Vercel and loads at a URL.
 
 **Blocked by:** None (can start immediately).
 
-**Status:** done except deploy (needs operator: Vercel import + env vars)
+**Status:** done — deployed at https://dispatch-os-delta.vercel.app/ (Vercel, root dir `web`, 5 env vars set)
 
 - [x] `web/` holds a Next.js App Router project (Next 16, pnpm); `pnpm dev`
       serves it locally. `pnpm build` + `pnpm lint` + `pnpm typecheck` pass.
@@ -33,6 +33,6 @@ env vars. The app is deployed to Vercel and loads at a URL.
 - [x] `.env.example` lists every Phase 1 env var. `web/.gitignore` covers
       `node_modules`, `.next`, `.env*`; root `.gitignore` + `.gitattributes`
       added.
-- [ ] The app is deployed to Vercel and reachable at a URL. — **operator step:
-      import `dispatch-os` in Vercel, Root Directory `web`, paste the five env
-      vars, deploy.**
+- [x] The app is deployed to Vercel and reachable at a URL —
+      https://dispatch-os-delta.vercel.app/ (verified: 200, shell renders, nav
+      groups + PageHeader present).
