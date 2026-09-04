@@ -1003,6 +1003,72 @@ textarea {
   padding-top: 0;
 }
 
+/* --- Dashboard nags --------------------------------------------------------- */
+.nags {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.nag-bucket {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  background: var(--paper);
+}
+.nag-bucket-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+.nag-count {
+  background: var(--card);
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  padding: 0 6px;
+}
+.nag-empty {
+  font-size: 11.5px;
+  color: var(--ink-faint);
+}
+.nag-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nag-list li {
+  border-top: 1px solid var(--line);
+}
+.nag-list li:first-child {
+  border-top: none;
+}
+.nag-row {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0;
+  text-decoration: none;
+  color: var(--ink);
+}
+.nag-row:hover .nag-name {
+  color: var(--accent);
+}
+.nag-name {
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.nag-detail {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-faint);
+  margin-top: 1px;
+}
+
 @media (max-width: 768px) {
   .mobile-menu-btn {
     display: flex;

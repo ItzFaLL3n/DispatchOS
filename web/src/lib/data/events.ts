@@ -29,6 +29,20 @@ export async function createClientEvent(
   return mapClientEventRow(data as Record<string, unknown>);
 }
 
+/** Distinct client ids that have at least one unresolved ascension-signal. */
+export async function listOpenAscensionSignalClientIds(): Promise<string[]> {
+  const { data, error } = await getSupabaseAdmin()
+    .from("client_events")
+    .select("client_id")
+    .eq("kind", "ascension-signal")
+    .is("resolved_at", null);
+
+  if (error) {
+    throw new Error(`listOpenAscensionSignalClientIds: ${error.message}`);
+  }
+  return [...new Set((data ?? []).map((r) => String((r as { client_id: string }).client_id)))];
+}
+
 /** Marks an open ascension-signal resolved. No-op if it is not an open signal. */
 export async function resolveAscensionSignal(eventId: string): Promise<void> {
   const { error } = await getSupabaseAdmin()

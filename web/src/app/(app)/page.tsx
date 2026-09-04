@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listClients } from "@/lib/data/clients";
+import { listOpenAscensionSignalClientIds } from "@/lib/data/events";
 import { serverEnv } from "@/lib/env";
 import {
   BOARD_COLUMNS,
@@ -10,12 +11,17 @@ import {
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 import { ContactWindow } from "@/components/ContactWindow";
+import { DashboardNags } from "@/components/DashboardNags";
 import type { Client } from "@/lib/data/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const clients = await listClients();
+  const [clients, openSignalIds] = await Promise.all([
+    listClients(),
+    listOpenAscensionSignalClientIds(),
+  ]);
+  const openSignalClientIds = new Set(openSignalIds);
   const operatorTz = serverEnv.operatorTz;
   const now = new Date();
 
@@ -81,6 +87,14 @@ export default async function DashboardPage() {
           );
         })}
       </div>
+
+      <Panel title="Needs attention" className="stack-panel-top">
+        <DashboardNags
+          clients={clients}
+          openSignalClientIds={openSignalClientIds}
+          now={now}
+        />
+      </Panel>
 
       {inBuild.length > 0 ? (
         <Panel title={`In build (${inBuild.length})`} className="stack-panel-top">
