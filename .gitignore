@@ -11,3 +11,6 @@ Thumbs.db
 
 # node (web/ has its own .gitignore too)
 node_modules/
+
+# Playwright MCP scratch output (snapshots/console logs from manual verification)
+.playwright-mcp/

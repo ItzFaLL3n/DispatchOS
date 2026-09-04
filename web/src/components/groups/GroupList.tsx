@@ -75,7 +75,7 @@ function GroupRow({ group }: { group: Group }) {
           </div>
           <div className="field">
             <label>Rules URL</label>
-            <input type="url" name="rulesUrl" defaultValue={group.rulesUrl ?? ""} />
+            <input type="text" name="rulesUrl" defaultValue={group.rulesUrl ?? ""} />
           </div>
           <div className="field">
             <label>Last post</label>
@@ -121,7 +121,7 @@ export function GroupList({ groups }: { groups: Group[] }) {
         </div>
         <div className="field">
           <label htmlFor="new-group-url">Rules URL</label>
-          <input id="new-group-url" type="url" name="rulesUrl" />
+          <input id="new-group-url" type="text" name="rulesUrl" />
         </div>
         <div className="field">
           <label htmlFor="new-group-last-post">Last post</label>
