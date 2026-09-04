@@ -1,0 +1,13 @@
+# impeccable design-hook cache (per-directory, machine-local)
+.impeccable/
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/
+
+# node (web/ has its own .gitignore too)
+node_modules/
