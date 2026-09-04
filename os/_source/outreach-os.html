@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dispatch — Outreach Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font-display: 'Barlow Condensed', 'Arial Narrow', 'Helvetica Neue Condensed', sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+
+    --rail-bg: #1D1B17;
+    --rail-line: rgba(255,255,255,0.08);
+    --rail-text: #B7AF9B;
+    --rail-text-active: #F5F1E6;
+    --rail-active-bg: rgba(225,83,33,0.18);
+
+    --paper: #F1ECDF;
+    --paper-hover: #E7DFC7;
+    --card: #FFFDF8;
+
+    --ink: #211D17;
+    --ink-soft: #6E6656;
+    --ink-faint: #A79E89;
+
+    --line: #DED2B8;
+    --line-strong: #C7B896;
+
+    --accent: #E15321;
+    --accent-hover: #C4441A;
+    --accent-soft: #FBE1CF;
+
+    --good: #2F6B3D;
+    --warn: #B4740E;
+    --bad: #B23A2E;
+    --info: #2A5C8A;
+
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --shadow-card: 0 1px 2px rgba(33,29,23,0.07);
+    --shadow-modal: 0 24px 48px rgba(20,17,12,0.30);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background-color: var(--paper);
+    background-image: radial-gradient(circle, rgba(33,29,23,0.06) 1px, transparent 1px);
+    background-size: 15px 15px;
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font-family: inherit; }
+  ::selection { background: var(--accent-soft); }
+
+  .app { display: flex; min-height: 100vh; }
+
+  /* Sidebar / rail */
+  .sidebar {
+    width: 232px; flex-shrink: 0;
+    background: var(--rail-bg);
+    display: flex; flex-direction: column;
+    padding: 18px 8px;
+    height: 100vh; position: sticky; top: 0;
+  }
+  .sidebar-header { display: flex; align-items: center; gap: 10px; padding: 4px 10px 18px; border-bottom: 1px solid var(--rail-line); margin-bottom: 6px; }
+  .brand-mark {
+    width: 30px; height: 30px; border-radius: var(--radius-sm);
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-weight: 700; font-size: 13px; flex-shrink: 0;
+  }
+  .brand-name { font-family: var(--font-display); font-weight: 700; font-size: 16px; letter-spacing: 0.02em; text-transform: uppercase; color: var(--rail-text-active); line-height: 1.15; }
+  .brand-sub { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rail-text); margin-top: 1px; }
+
+  .nav-group-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.32); padding: 14px 12px 6px; }
+  .nav { display: flex; flex-direction: column; gap: 1px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 9px;
+    padding: 8px 10px 8px 12px; border-radius: var(--radius-sm);
+    background: transparent; border: none; border-left: 2px solid transparent; cursor: pointer;
+    color: var(--rail-text); font-size: 13px; text-align: left;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--rail-text-active); }
+  .nav-item.active { background: var(--rail-active-bg); color: var(--rail-text-active); border-left-color: var(--accent); font-weight: 600; }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .nav-num { font-family: var(--font-mono); font-size: 10.5px; opacity: 0.6; width: 15px; }
+  .sidebar-footer {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; color: var(--rail-text);
+    padding: 12px 12px 4px; border-top: 1px solid var(--rail-line);
+    margin-top: auto; line-height: 1.7; text-transform: uppercase; opacity: 0.75;
+  }
+  .mobile-menu-btn {
+    display: none; position: fixed; top: 12px; left: 12px; z-index: 50;
+    width: 34px; height: 34px; border-radius: var(--radius-sm);
+    background: var(--card); border: 1px solid var(--line-strong);
+    cursor: pointer; box-shadow: var(--shadow-card); align-items: center; justify-content: center; color: var(--ink);
+  }
+  .mobile-menu-btn svg { width: 18px; height: 18px; }
+
+  /* Main */
+  .main { flex: 1; min-width: 0; padding: 40px 46px 90px; max-width: 1000px; }
+  .page.hidden { display: none; }
+  .ticket-head { margin-bottom: 26px; }
+  .ticket-meta { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); }
+  .page-title { font-family: var(--font-display); font-weight: 700; font-size: 34px; text-transform: uppercase; letter-spacing: 0.01em; line-height: 1; margin: 8px 0 12px; color: var(--ink); }
+  .ticket-rule { height: 1px; background: var(--line-strong); margin-bottom: 4px; position: relative; }
+  .ticket-rule::after { content: ''; display: block; height: 1px; background: var(--line); margin-top: 4px; }
+  .page-sub { color: var(--ink-soft); font-size: 13.5px; line-height: 1.55; max-width: 560px; margin-top: 12px; }
+
+  /* Grid */
+  .grid { display: grid; gap: 14px; }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 900px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } .grid-2 { grid-template-columns: 1fr; } }
+
+  .stat-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius-md); padding: 16px;
+    box-shadow: var(--shadow-card); border-bottom: 2px solid var(--line-strong);
+  }
+  .stat-num { font-family: var(--font-mono); font-size: 27px; font-weight: 600; }
+  .stat-label { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); margin-top: 5px; }
+
+  .panel {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius-md); padding: 18px 20px;
+    box-shadow: var(--shadow-card);
+  }
+  .panel-title {
+    font-family: var(--font-mono); font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-soft); margin: 0 0 14px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .empty-state { color: var(--ink-faint); font-size: 13px; padding: 18px 4px; text-align: center; }
+
+  .list-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); gap: 10px; }
+  .list-row:last-child { border-bottom: none; }
+  .list-row-title { font-size: 13.5px; font-weight: 500; }
+  .list-row-meta { font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); margin-top: 2px; }
+
+  /* Stamps (status + priority) */
+  .stamp {
+    display: inline-flex; align-items: center; white-space: nowrap;
+    font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 3px 8px; border: 1.4px solid currentColor; border-radius: 3px;
+    background: rgba(255,255,255,0.55); transform: rotate(-1deg);
+  }
+  .stamp-active, .stamp-posted { color: var(--good); }
+  .stamp-pending { color: var(--warn); }
+  .stamp-scheduled { color: var(--info); }
+  .stamp-flagged { color: var(--bad); }
+  .stamp-review, .stamp-draft, .stamp-low { color: var(--ink-soft); }
+  .stamp-medium { color: var(--info); }
+  .stamp-high { color: var(--bad); }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: var(--radius-sm);
+    font-size: 12.5px; font-weight: 600; letter-spacing: 0.01em; cursor: pointer;
+    border: 1.5px solid var(--line-strong); background: var(--card); color: var(--ink);
+    transition: background 0.12s ease, border-color 0.12s ease;
+  }
+  .btn:hover { background: var(--paper-hover); }
+  .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn-sm { padding: 4px 10px; font-size: 11.5px; }
+  .btn-ghost { border-color: transparent; background: transparent; color: var(--ink-soft); }
+  .btn-ghost:hover { background: var(--paper-hover); color: var(--ink); }
+  .btn-danger { color: var(--bad); }
+  .btn:focus-visible, .nav-item:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 1px;
+  }
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* Forms */
+  label { display: block; font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 6px; }
+  input[type=text], input[type=number], input[type=date], select, textarea {
+    width: 100%; padding: 8px 10px; border-radius: var(--radius-sm);
+    border: 1.4px solid var(--line-strong); background: #fff; color: var(--ink);
+    font-size: 13.5px; font-family: var(--font-body);
+  }
+  textarea { resize: vertical; min-height: 70px; }
+  .field { margin-bottom: 14px; }
+  .field-row { display: flex; gap: 12px; }
+  .field-row > .field { flex: 1; }
+
+  /* Toggle */
+  .toggle-group { display: inline-flex; border: 1.4px solid var(--line-strong); border-radius: var(--radius-sm); overflow: hidden; }
+  .toggle-opt { padding: 7px 15px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; cursor: pointer; color: var(--ink-soft); border: none; background: var(--card); }
+  .toggle-opt.active { background: var(--accent); color: #fff; }
+
+  /* Post output */
+  .output-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+  @media (max-width: 800px) { .output-grid { grid-template-columns: 1fr; } }
+  .output-card { border: 1px solid var(--line); border-radius: var(--radius-md); padding: 14px 16px; background: var(--paper); }
+  .output-card h4 { margin: 0 0 8px; font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 600; }
+  .output-text { white-space: pre-wrap; font-size: 13.5px; line-height: 1.6; color: var(--ink); font-family: var(--font-body); }
+
+  /* Table */
+  .table { width: 100%; border-collapse: collapse; }
+  .table th { text-align: left; font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint); padding: 8px 10px; border-bottom: 1px solid var(--line-strong); }
+  .table td { padding: 10px 10px; border-bottom: 1px solid var(--line); font-size: 13px; vertical-align: top; }
+  .table tr:last-child td { border-bottom: none; }
+  .notes-preview { color: var(--ink-soft); font-size: 12.5px; max-width: 260px; }
+
+  /* Kanban */
+  .kanban { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 800px) { .kanban { grid-template-columns: 1fr; } }
+  .kanban-col { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 12px; min-height: 120px; }
+  .kanban-col-title { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .kanban-count { background: var(--card); border: 1px solid var(--line-strong); border-radius: 3px; padding: 1px 7px; font-family: var(--font-mono); font-size: 10.5px; }
+  .task-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 8px; box-shadow: var(--shadow-card); }
+  .task-title { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .task-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-faint); margin-bottom: 8px; }
+  .task-actions { display: flex; gap: 5px; }
+
+  /* Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(20,17,12,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+  .modal-overlay.hidden { display: none; }
+  .modal { background: var(--card); border: 1px solid var(--line-strong); border-radius: var(--radius-md); padding: 22px 24px; width: 100%; max-width: 440px; box-shadow: var(--shadow-modal); max-height: 88vh; overflow-y: auto; }
+  .modal h3 { font-family: var(--font-display); font-weight: 700; font-size: 21px; text-transform: uppercase; letter-spacing: 0.01em; margin: 0 0 16px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--ink); color: var(--paper); padding: 10px 18px;
+    border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.03em; opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease; z-index: 200;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Playbook */
+  .pb-section { margin-bottom: 22px; }
+  .pb-section h3 { font-family: var(--font-display); font-weight: 700; font-size: 17px; text-transform: uppercase; letter-spacing: 0.01em; margin: 0 0 10px; color: var(--ink); }
+  .pb-section ul { margin: 0; padding-left: 18px; color: var(--ink); font-size: 13.5px; line-height: 1.7; }
+  .pb-section p { font-size: 13.5px; line-height: 1.7; color: var(--ink); margin: 4px 0; }
+
+  @media (max-width: 768px) {
+    .mobile-menu-btn { display: flex; }
+    .sidebar { position: fixed; z-index: 40; left: -260px; transition: left 0.2s ease; box-shadow: var(--shadow-modal); }
+    .sidebar.open { left: 0; }
+    .main { padding: 66px 18px 60px; }
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 6h14M3 10h14M3 14h14"/></svg>
+</button>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-mark">D</div>
+      <div>
+        <div class="brand-name">Dispatch</div>
+        <div class="brand-sub">outreach console</div>
+      </div>
+    </div>
+    <nav class="nav" id="navList">
+      <div class="nav-group-label">Overview</div>
+      <button class="nav-item" data-page="dashboard">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="2.5" width="6" height="6" rx="1"/><rect x="11.5" y="2.5" width="6" height="6" rx="1"/><rect x="2.5" y="11.5" width="6" height="6" rx="1"/><rect x="11.5" y="11.5" width="6" height="6" rx="1"/></svg>
+        <span>Dashboard</span>
+      </button>
+
+      <div class="nav-group-label">Workflow</div>
+      <button class="nav-item" data-page="clients">
+        <span class="nav-num">01</span>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="12" rx="1.5"/><path d="M2.5 8h15"/><circle cx="6.5" cy="12" r="1.3"/><path d="M9.5 12h4"/></svg>
+        <span>Clients</span>
+      </button>
+      <button class="nav-item" data-page="groups">
+        <span class="nav-num">02</span>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="2.6"/><circle cx="14" cy="8" r="2.1"/><path d="M2.5 17c0-2.8 2-4.6 4.5-4.6s4.5 1.8 4.5 4.6"/><path d="M12.8 12.9c1.9.2 3.2 1.7 3.2 4.1"/></svg>
+        <span>Groups</span>
+      </button>
+      <button class="nav-item" data-page="creator">
+        <span class="nav-num">03</span>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 3.5l3 3L6 17H3v-3z"/></svg>
+        <span>Creator</span>
+      </button>
+      <button class="nav-item" data-page="schedule">
+        <span class="nav-num">04</span>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2.5" y="4" width="15" height="13.5" rx="1.5"/><path d="M2.5 8h15"/><path d="M6.5 2.5v3"/><path d="M13.5 2.5v3"/></svg>
+        <span>Schedule</span>
+      </button>
+      <button class="nav-item" data-page="library">
+        <span class="nav-num">05</span>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M10 2.5l7.5 3.8L10 10 2.5 6.3z"/><path d="M2.5 10.5L10 14l7.5-3.5"/><path d="M2.5 14.5L10 18l7.5-3.5"/></svg>
+        <span>Library</span>
+      </button>
+      <button class="nav-item" data-page="todo">
+        <span class="nav-num">06</span>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="15" height="15" rx="2"/><path d="M6 10l2.7 2.7L14 7.2"/></svg>
+        <span>Todo</span>
+      </button>
+
+      <div class="nav-group-label">Reference</div>
+      <button class="nav-item" data-page="playbook">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M2.5 4c1.8-1 4-1.2 7 0v12c-3-1.2-5.2-1-7 0z"/><path d="M17.5 4c-1.8-1-4-1.2-7 0v12c3-1.2 5.2-1 7 0z"/></svg>
+        <span>Playbook</span>
+      </button>
+    </nav>
+    <div class="sidebar-footer">2 spots · honest terms<br>no bait-and-switch</div>
+  </aside>
+
+  <main class="main">
+    <section id="page-dashboard" class="page"></section>
+    <section id="page-clients" class="page hidden"></section>
+    <section id="page-creator" class="page hidden"></section>
+    <section id="page-library" class="page hidden"></section>
+    <section id="page-schedule" class="page hidden"></section>
+    <section id="page-groups" class="page hidden"></section>
+    <section id="page-todo" class="page hidden"></section>
+    <section id="page-playbook" class="page hidden"></section>
+  </main>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- State ---------------- */
+const appState = { groups: [], posts: [], todos: [], clients: [] };
+let currentPage = 'dashboard';
+
+/* ---------------- Utilities ---------------- */
+function esc(str) {
+  if (str === null || str === undefined) return '';
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function genId(prefix) { return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso + 'T00:00:00');
+  if (isNaN(d)) return iso;
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function todayISO() { return new Date().toISOString().slice(0,10); }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+function pageHeader(formNo, title, sub) {
+  return `
+    <div class="ticket-head">
+      <div class="ticket-meta">Form No. ${formNo} &middot; ${new Date().toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'})}</div>
+      <h1 class="page-title">${title}</h1>
+      <div class="ticket-rule"></div>
+      <div class="page-sub">${sub}</div>
+    </div>
+  `;
+}
+function statusBadge(status) {
+  const map = {
+    active: ['active','stamp-active'], pending: ['pending','stamp-pending'],
+    flagged: ['flagged','stamp-flagged'], 'needs-review': ['needs review','stamp-review'],
+    draft: ['draft','stamp-draft'], scheduled: ['scheduled','stamp-scheduled'], posted: ['posted','stamp-posted']
+  };
+  const [label, cls] = map[status] || map['needs-review'];
+  return `<span class="stamp ${cls}">${label}</span>`;
+}
+function priorityPill(p) {
+  const map = { low: ['low','stamp-low'], medium: ['medium','stamp-medium'], high: ['high','stamp-high'] };
+  const [label, cls] = map[p] || map.low;
+  return `<span class="stamp ${cls}">${label}</span>`;
+}
+function groupName(id) {
+  const g = appState.groups.find(g => g.id === id);
+  return g ? g.name : null;
+}
+function buildStatusBadge(status) {
+  const map = {
+    'not-started': ['not started', 'stamp-draft'],
+    'in-progress': ['in progress', 'stamp-pending'],
+    'delivered': ['delivered', 'stamp-active']
+  };
+  const [label, cls] = map[status] || map['not-started'];
+  return `<span class="stamp ${cls}">${label}</span>`;
+}
+function retainerStatusBadge(status) {
+  const map = {
+    'not-pitched': ['not pitched', 'stamp-draft'],
+    'pitched': ['pitched', 'stamp-pending'],
+    'deferred': ['deferred', 'stamp-scheduled'],
+    'active': ['active', 'stamp-active'],
+    'declined': ['declined', 'stamp-flagged']
+  };
+  const [label, cls] = map[status] || map['not-pitched'];
+  return `<span class="stamp ${cls}">${label}</span>`;
+}
+function offerTypeLabel(type) {
+  const map = { 'free-website': 'free website', 'free-review-agent': 'free review agent', 'both': 'website + review agent', 'direct-pitch': 'direct hosting pitch' };
+  return map[type] || type;
+}
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Copied to clipboard');
+  }).catch(() => showToast('Could not copy — select and copy manually'));
+}
+
+/* ---------------- Storage ---------------- */
+async function loadState() {
+  try { const r = await window.storage.get('groups'); appState.groups = r ? JSON.parse(r.value) : []; } catch(e) { appState.groups = []; }
+  try { const r = await window.storage.get('posts'); appState.posts = r ? JSON.parse(r.value) : []; } catch(e) { appState.posts = []; }
+  try { const r = await window.storage.get('todos'); appState.todos = r ? JSON.parse(r.value) : []; } catch(e) { appState.todos = []; }
+  try { const r = await window.storage.get('clients'); appState.clients = r ? JSON.parse(r.value) : []; } catch(e) { appState.clients = []; }
+  await seedClientsIfNeeded();
+  await patchHeartlandClient();
+}
+
+/* One-time patch: updates the existing "(name pending)" prospect (already in a live,
+   already-seeded board) with the now-confirmed HeartLand details, so this doesn't just
+   land in fresh seed data that only new/empty boards would ever see. Guarded so it only
+   runs once. */
+async function patchHeartlandClient() {
+  try {
+    const r = await window.storage.get('heartland_patch_v1');
+    if (r && r.value === 'true') return;
+  } catch(e) {}
+
+  const already = appState.clients.some(c => c.businessName === 'HeartLand Demo & Junk Removal');
+  if (!already) {
+    const placeholder = appState.clients.find(c => c.businessName === '(name pending)');
+    const updates = {
+      businessName: 'HeartLand Demo & Junk Removal',
+      source: 'fb-comment',
+      offerType: 'free-website',
+      buildStatus: 'in-progress',
+      retainerStatus: 'not-pitched',
+      notes: 'Junk removal + demolition, new business (owner also runs separate Non-Typical Builders LLC). Name confirmed from logo, build started, 16 photos received (more coming). Still need: contact name, email, mobile, own FB page (not Non-Typical Builders), service area, pricing display pref. No domain yet. He raised wanting Google ranking unprompted — fair to bring up GBP/SEO sooner than the usual 2-month mark once retainer is live, but not before delivery.'
+    };
+    if (placeholder) {
+      Object.assign(placeholder, updates);
+    } else {
+      appState.clients.unshift({ id: genId('client'), contactName: '', location: '', retainerTier: '', ...updates, createdAt: new Date().toISOString() });
+    }
+    await persist('clients');
+  }
+
+  try { await window.storage.set('heartland_patch_v1', 'true'); } catch(e) {}
+}
+
+/* One-time seed of the current real pipeline, so the board isn't empty on first load.
+   Guarded by a flag so deleting all clients later doesn't bring them back. */
+async function seedClientsIfNeeded() {
+  let alreadySeeded = false;
+  try { const r = await window.storage.get('clients_seeded'); alreadySeeded = !!(r && r.value === 'true'); } catch(e) { alreadySeeded = false; }
+  if (alreadySeeded || appState.clients.length > 0) return;
+
+  appState.clients = [
+    {
+      id: genId('client'), businessName: 'HD Junk Removal & Demolition LLC', contactName: 'Tyler M Morris',
+      location: 'Sheffield, AL', source: 'fb-comment', offerType: 'free-website',
+      buildStatus: 'delivered', retainerStatus: 'deferred',
+      retainerTier: '$39/mo self-managed domain or $49/mo domain handled',
+      notes: 'Flagship client. Site live on Vercel. Dashboard/customer tracking + service pages + SEO folded in free. He wants a few more jobs first — re-check-in ~Sept 18, no re-pitch before then.',
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: genId('client'), businessName: 'Zenith Junk Removal', contactName: '',
+      location: 'Davis County, UT', source: 'other', offerType: 'free-website',
+      buildStatus: 'delivered', retainerStatus: 'not-pitched', retainerTier: '',
+      notes: 'Site live on Netlify subdomain. Domain conversation deferred by client choice. Web3Forms contact form — 1 recipient slot left before free-tier cap.',
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: genId('client'), businessName: 'ProLift Hauling LLC', contactName: 'Samuel Anthony Carter',
+      location: 'Fontana / Upland, CA', source: 'fb-post-reply', offerType: 'free-website',
+      buildStatus: 'not-started', retainerStatus: 'not-pitched', retainerTier: '',
+      notes: 'Free website offer sent, waiting on his reply. Asked about a job-tracking dashboard — navigated honestly (marketing site first, tracking as a separate paid upsell later).',
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: genId('client'), businessName: 'HeartLand Demo & Junk Removal', contactName: '',
+      location: '', source: 'fb-comment', offerType: 'free-website',
+      buildStatus: 'in-progress', retainerStatus: 'not-pitched', retainerTier: '',
+      notes: 'Junk removal + demolition, new business (owner also runs separate Non-Typical Builders LLC). Name confirmed from logo, build started, 16 photos received (more coming). Still need: contact name, email, mobile, own FB page (not Non-Typical Builders), service area, pricing display pref. No domain yet. He raised wanting Google ranking unprompted — fair to bring up GBP/SEO sooner than the usual 2-month mark once retainer is live, but not before delivery.',
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: genId('client'), businessName: 'Rice Moving and Hauling', contactName: '',
+      location: 'Lufkin / DFW', source: 'other', offerType: 'direct-pitch',
+      buildStatus: 'not-started', retainerStatus: 'pitched', retainerTier: '',
+      notes: 'Rejected the free-build funnel explicitly. Pivoted to a direct domain + hosting + SEO pitch, using his self-built Netlify site as a hook. Went quiet after a read receipt — one follow-up prepared, move on if no reply.',
+      createdAt: new Date().toISOString()
+    }
+  ];
+  await persist('clients');
+  try { await window.storage.set('clients_seeded', 'true'); } catch(e) {}
+}
+async function persist(key) {
+  try { await window.storage.set(key, JSON.stringify(appState[key])); }
+  catch (e) { showToast('Could not save — try again'); }
+}
+
+/* ---------------- Navigation ---------------- */
+function switchPage(page) {
+  currentPage = page;
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  document.getElementById('page-' + page).classList.remove('hidden');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page));
+  document.getElementById('sidebar').classList.remove('open');
+  renderPage(page);
+}
+function renderPage(page) {
+  if (page === 'dashboard') renderDashboard();
+  else if (page === 'clients') renderClients();
+  else if (page === 'creator') renderCreator();
+  else if (page === 'library') renderLibrary();
+  else if (page === 'schedule') renderSchedule();
+  else if (page === 'groups') renderGroups();
+  else if (page === 'todo') renderTodo();
+  else if (page === 'playbook') renderPlaybook();
+}
+
+/* ---------------- Modal helpers ---------------- */
+function openModal(html) {
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.getElementById('modalContent').innerHTML = '';
+}
+function confirmAction(message, onYes) {
+  openModal(`
+    <h3>Confirm</h3>
+    <p style="font-size:13.5px;color:var(--ink-soft);margin-bottom:18px;">${esc(message)}</p>
+    <div class="btn-row" style="justify-content:flex-end;">
+      <button class="btn" id="confirmNo">Cancel</button>
+      <button class="btn btn-primary" id="confirmYes" style="background:var(--bad);border-color:var(--bad);">Delete</button>
+    </div>
+  `);
+  document.getElementById('confirmNo').onclick = closeModal;
+  document.getElementById('confirmYes').onclick = () => { closeModal(); onYes(); };
+}
+
+/* ================= DASHBOARD ================= */
+function renderDashboard() {
+  const total = appState.groups.length;
+  const active = appState.groups.filter(g => g.status === 'active').length;
+  const pending = appState.groups.filter(g => g.status === 'pending').length;
+  const flagged = appState.groups.filter(g => g.status === 'flagged').length;
+  const openTodos = appState.todos.filter(t => t.status !== 'done').length;
+  const upcomingPosts = appState.posts.filter(p => p.scheduledDate && p.scheduledDate >= todayISO())
+    .sort((a,b) => a.scheduledDate.localeCompare(b.scheduledDate)).slice(0,5);
+  const dueSoon = appState.todos.filter(t => t.status !== 'done' && t.dueDate)
+    .sort((a,b) => a.dueDate.localeCompare(b.dueDate)).slice(0,5);
+
+  document.getElementById('page-dashboard').innerHTML = `
+    ${pageHeader('000','Dashboard','Everything running through the outreach system, at a glance.')}
+
+    <div class="grid grid-4" style="margin-bottom:20px;">
+      <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Groups tracked</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--good)">${active}</div><div class="stat-label">Active groups</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--warn)">${pending}</div><div class="stat-label">Pending review</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--bad)">${flagged}</div><div class="stat-label">Flagged</div></div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="panel">
+        <div class="panel-title">Upcoming scheduled posts <button class="btn btn-sm" data-nav="schedule">View all</button></div>
+        ${upcomingPosts.length === 0 ? '<div class="empty-state">Nothing scheduled yet. Create a post and assign a date.</div>' :
+          upcomingPosts.map(p => `
+            <div class="list-row">
+              <div class="list-row-main">
+                <div class="list-row-title">${esc(p.niche)} — ${esc(groupName(p.groupId) || 'unassigned group')}</div>
+                <div class="list-row-meta">${fmtDate(p.scheduledDate)}</div>
+              </div>
+              ${statusBadge(p.status)}
+            </div>
+          `).join('')}
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Due soon <button class="btn btn-sm" data-nav="todo">View board</button></div>
+        ${dueSoon.length === 0 ? '<div class="empty-state">No open tasks with due dates.</div>' :
+          dueSoon.map(t => `
+            <div class="list-row">
+              <div class="list-row-main">
+                <div class="list-row-title">${esc(t.title)}</div>
+                <div class="list-row-meta">${fmtDate(t.dueDate)}${t.groupId ? ' · ' + esc(groupName(t.groupId) || '') : ''}</div>
+              </div>
+              ${priorityPill(t.priority)}
+            </div>
+          `).join('')}
+        <div style="margin-top:14px;font-family:var(--font-mono);color:var(--ink-faint);font-size:11px;">${openTodos} open task${openTodos===1?'':'s'} total</div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:20px;">
+      <div class="panel-title">Pipeline snapshot <button class="btn btn-sm" data-nav="clients">View all</button></div>
+      ${appState.clients.length === 0 ? '<div class="empty-state">No clients yet. Add one from the Clients page.</div>' :
+        appState.clients.slice(0,6).map(c => `
+          <div class="list-row">
+            <div class="list-row-main">
+              <div class="list-row-title">${esc(c.businessName)}</div>
+              <div class="list-row-meta">${esc(c.location) || 'location unset'}</div>
+            </div>
+            <div class="btn-row">${buildStatusBadge(c.buildStatus)}${retainerStatusBadge(c.retainerStatus)}</div>
+          </div>
+        `).join('')}
+    </div>
+
+    <div class="btn-row" style="margin-top:20px;">
+      <button class="btn btn-primary" data-nav="clients" data-action="add-client">+ Add client</button>
+      <button class="btn btn-primary" data-nav="creator">+ New post</button>
+      <button class="btn" data-nav="groups" data-action="add-group">+ Add group</button>
+      <button class="btn" data-nav="todo" data-action="add-todo">+ Add task</button>
+    </div>
+  `;
+  wireNavShortcuts('page-dashboard');
+}
+function wireNavShortcuts(containerId) {
+  const el = document.getElementById(containerId);
+  el.querySelectorAll('[data-nav]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchPage(btn.dataset.nav);
+      if (btn.dataset.action === 'add-group') setTimeout(openGroupModal, 50);
+      if (btn.dataset.action === 'add-todo') setTimeout(openTodoModal, 50);
+      if (btn.dataset.action === 'add-client') setTimeout(openClientModal, 50);
+    });
+  });
+}
+
+/* ================= POST CREATOR ================= */
+let creatorMode = 'ai';
+let lastGenerated = null;
+
+function renderCreator() {
+  document.getElementById('page-creator').innerHTML = `
+    ${pageHeader('002','Post Creator','Builds the gif-post and normal-post pair, following the rules on file.')}
+
+    <div class="panel" style="margin-bottom:18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="panel-title" style="margin:0;">Generation mode</div>
+        <div class="toggle-group">
+          <button class="toggle-opt ${creatorMode==='ai'?'active':''}" id="modeAiBtn">Live AI</button>
+          <button class="toggle-opt ${creatorMode==='template'?'active':''}" id="modeTplBtn">Template</button>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field"><label>Niche / audience</label><input type="text" id="cNiche" value="junk removal businesses" /></div>
+        <div class="field"><label>Offer</label>
+          <select id="cOffer">
+            <option value="website">Free website</option>
+            <option value="review-agent">Google review agent</option>
+            <option value="both">Website + review agent</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Spots available</label><input type="number" id="cSpots" value="2" min="1" max="10" /></div>
+        <div class="field"><label>Cost phrasing</label>
+          <select id="cCost">
+            <option value="free">free</option>
+            <option value="at no cost">at no cost</option>
+            <option value="on the house">on the house</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Additional context</label>
+        <textarea id="cExtra" placeholder="e.g. posting in a generalized small-business group, keep it broader than junk removal"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="generateBtn">Generate post</button>
+        <span id="genStatus" style="font-family:var(--font-mono);font-size:11.5px;color:var(--ink-faint);align-self:center;"></span>
+      </div>
+    </div>
+
+    <div id="outputPanel"></div>
+  `;
+  document.getElementById('modeAiBtn').onclick = () => { creatorMode = 'ai'; renderCreator(); };
+  document.getElementById('modeTplBtn').onclick = () => { creatorMode = 'template'; renderCreator(); };
+  document.getElementById('generateBtn').onclick = handleGenerate;
+}
+
+function templateGenerate(ctx) {
+  const offerLabel = ctx.offerType === 'review-agent' ? 'a free google review agent'
+    : ctx.offerType === 'both' ? 'a website and google review agent'
+    : 'a website';
+  const costAdj = ctx.costPhrase === 'free' ? `a free ${offerLabel.replace('a free ','')} built for them`
+    : `${offerLabel.replace('a free ','a ')} built for them, ${ctx.costPhrase}`;
+  const gifVersion = `looking for ${ctx.spots} ${ctx.niche} to get ${costAdj}.\nyou own it, host it anywhere; all i ask for is feedback.\nreach out if that's you.`;
+  const normalVersion = `looking for ${ctx.spots} ${ctx.niche} to get ${costAdj}.\n\nyou own it, host it anywhere, no strings — all i ask for is feedback on how it's actually helping bring in more calls and jobs.\n\nonly taking ${ctx.spots} right now so i can put real time into each one instead of spreading thin.\n\nif that's you, reach out and we'll get started.`;
+  return { gifVersion, normalVersion };
+}
+
+async function aiGenerate(ctx) {
+  const systemPrompt = `You write Facebook outreach posts for Bruce's AI services business targeting small local service companies (currently junk removal / hauling). Follow these rules exactly:
+
+TONE: lowercase, casual, human-written, short punchy sentences, no AI-sounding language, no corporate phrasing, no hashtags, sounds like a real Facebook group post, never a landing page.
+
+FORMAT: produce exactly two versions.
+1. gifVersion: about 3 lines, short, strong hook, written for a Facebook background-image text post.
+2. normalVersion: fuller length (roughly 4-6 short lines), explains a real benefit of the offer, still casual.
+
+CTA RULES: never use "comment below", "dm me", "drop a [emoji] if...", or any direct engagement-bait phrasing. Use soft, open-ended CTAs like "reach out if that's you" or "send a message my way".
+
+OFFER FRAMING: lead with the outcome (more jobs, more calls, more local recognition), not the mechanism or tool name. State plainly that they own it and can host it anywhere, no strings. The limited spots is a genuine operational constraint, not fake urgency — frame it that way. Ask for feedback as the low-friction "price" of the free build. Do not mention hosting costs or fine print in the post itself.
+
+WORD CHOICE: use the exact cost phrase provided instead of assuming the word "free" is safe — some Facebook groups flag it.
+
+Respond with ONLY valid JSON, no markdown fences, no commentary, in exactly this shape:
+{"gifVersion": "...", "normalVersion": "..."}`;
+
+  const userPrompt = `Niche: ${ctx.niche}
+Offer: ${ctx.offerType}
+Spots available: ${ctx.spots}
+Cost phrasing to use: ${ctx.costPhrase}
+Additional context: ${ctx.extra || 'none'}`;
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: [{ role: "user", content: userPrompt }]
+    })
+  });
+  if (!response.ok) throw new Error('API request failed');
+  const data = await response.json();
+  const text = (data.content || []).map(b => b.text || '').join('');
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+async function handleGenerate() {
+  const ctx = {
+    niche: document.getElementById('cNiche').value.trim() || 'junk removal businesses',
+    offerType: document.getElementById('cOffer').value,
+    spots: document.getElementById('cSpots').value || '2',
+    costPhrase: document.getElementById('cCost').value,
+    extra: document.getElementById('cExtra').value.trim()
+  };
+  const statusEl = document.getElementById('genStatus');
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+
+  if (creatorMode === 'ai') {
+    statusEl.textContent = 'asking claude...';
+    try {
+      const result = await aiGenerate(ctx);
+      lastGenerated = { ...result, ctx };
+      statusEl.textContent = '';
+      renderOutput();
+    } catch (e) {
+      statusEl.textContent = '';
+      showToast('Live AI generation failed — used template instead');
+      const result = templateGenerate(ctx);
+      lastGenerated = { ...result, ctx };
+      renderOutput();
+    }
+  } else {
+    const result = templateGenerate(ctx);
+    lastGenerated = { ...result, ctx };
+    statusEl.textContent = '';
+    renderOutput();
+  }
+  btn.disabled = false;
+}
+
+function renderOutput() {
+  if (!lastGenerated) { document.getElementById('outputPanel').innerHTML = ''; return; }
+  const g = lastGenerated;
+  document.getElementById('outputPanel').innerHTML = `
+    <div class="panel">
+      <div class="panel-title" style="margin:0 0 14px;">Generated post</div>
+      <div class="output-grid">
+        <div class="output-card">
+          <h4>Gif post version</h4>
+          <div class="output-text">${esc(g.gifVersion)}</div>
+          <div class="btn-row" style="margin-top:10px;"><button class="btn btn-sm" id="copyGif">Copy</button></div>
+        </div>
+        <div class="output-card">
+          <h4>Normal version</h4>
+          <div class="output-text">${esc(g.normalVersion)}</div>
+          <div class="btn-row" style="margin-top:10px;"><button class="btn btn-sm" id="copyNormal">Copy</button></div>
+        </div>
+      </div>
+      <div class="field-row" style="margin-top:18px;">
+        <div class="field"><label>Assign to group</label>
+          <select id="saveGroup"><option value="">— none yet —</option>
+            ${appState.groups.map(gr => `<option value="${gr.id}">${esc(gr.name)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field"><label>Schedule date</label><input type="date" id="saveDate" /></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary" id="saveDraftBtn">Save to library</button></div>
+    </div>
+  `;
+  document.getElementById('copyGif').onclick = () => copyToClipboard(g.gifVersion);
+  document.getElementById('copyNormal').onclick = () => copyToClipboard(g.normalVersion);
+  document.getElementById('saveDraftBtn').onclick = () => {
+    const groupId = document.getElementById('saveGroup').value || null;
+    const scheduledDate = document.getElementById('saveDate').value || null;
+    const post = {
+      id: genId('post'), niche: g.ctx.niche, offerType: g.ctx.offerType,
+      gifVersion: g.gifVersion, normalVersion: g.normalVersion,
+      groupId, scheduledDate, status: scheduledDate ? 'scheduled' : 'draft',
+      createdAt: new Date().toISOString()
+    };
+    appState.posts.unshift(post);
+    persist('posts');
+    showToast(scheduledDate ? 'Saved and scheduled' : 'Saved to library');
+    lastGenerated = null;
+    switchPage('library');
+  };
+}
+
+/* ================= CONTENT LIBRARY ================= */
+let libraryFilter = 'all';
+function renderLibrary() {
+  const posts = libraryFilter === 'all' ? appState.posts : appState.posts.filter(p => p.status === libraryFilter);
+  document.getElementById('page-library').innerHTML = `
+    ${pageHeader('004','Content Library',"Every post you've generated, ready to copy.")}
+    <div class="btn-row" style="margin-bottom:18px;">
+      ${['all','draft','scheduled','posted','pending','flagged'].map(f => `
+        <button class="btn btn-sm ${libraryFilter===f?'btn-primary':''}" data-filter="${f}">${f[0].toUpperCase()+f.slice(1)}</button>
+      `).join('')}
+    </div>
+    ${posts.length === 0 ? '<div class="panel"><div class="empty-state">No posts here yet. Head to Post Creator to make one.</div></div>' :
+      posts.map(p => `
+        <div class="panel" style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;">
+            <div>
+              <div style="font-weight:600;font-size:13.5px;">${esc(p.niche)} <span style="color:var(--ink-faint);font-weight:400;">· ${esc(p.offerType)}</span></div>
+              <div class="list-row-meta">${p.groupId ? esc(groupName(p.groupId) || 'unknown group') + ' · ' : ''}${p.scheduledDate ? fmtDate(p.scheduledDate) : 'not scheduled'} · created ${fmtDate(p.createdAt.slice(0,10))}</div>
+            </div>
+            ${statusBadge(p.status)}
+          </div>
+          <div class="output-grid">
+            <div class="output-card"><h4>Gif post</h4><div class="output-text">${esc(p.gifVersion)}</div>
+              <div class="btn-row" style="margin-top:8px;"><button class="btn btn-sm" data-copy="${p.id}-gif">Copy</button></div></div>
+            <div class="output-card"><h4>Normal</h4><div class="output-text">${esc(p.normalVersion)}</div>
+              <div class="btn-row" style="margin-top:8px;"><button class="btn btn-sm" data-copy="${p.id}-normal">Copy</button></div></div>
+          </div>
+          <div class="btn-row" style="margin-top:12px;">
+            <select data-status-select="${p.id}" style="width:auto;padding:5px 8px;font-size:12px;">
+              ${['draft','scheduled','posted','pending','flagged'].map(s => `<option value="${s}" ${p.status===s?'selected':''}>${s}</option>`).join('')}
+            </select>
+            <button class="btn btn-sm btn-ghost btn-danger" data-delete-post="${p.id}">Delete</button>
+          </div>
+        </div>
+      `).join('')}
+  `;
+  document.querySelectorAll('[data-filter]').forEach(b => b.onclick = () => { libraryFilter = b.dataset.filter; renderLibrary(); });
+  document.querySelectorAll('[data-copy]').forEach(b => b.onclick = () => {
+    const [id, kind] = b.dataset.copy.split('-');
+    const post = appState.posts.find(p => p.id === id);
+    if (post) copyToClipboard(kind === 'gif' ? post.gifVersion : post.normalVersion);
+  });
+  document.querySelectorAll('[data-status-select]').forEach(sel => sel.onchange = () => {
+    const post = appState.posts.find(p => p.id === sel.dataset.statusSelect);
+    if (post) {
+      post.status = sel.value;
+      if (sel.value === 'posted' && post.groupId) {
+        const grp = appState.groups.find(g => g.id === post.groupId);
+        if (grp) { grp.lastPostDate = todayISO(); persist('groups'); }
+      }
+      persist('posts'); renderLibrary(); showToast('Status updated');
+    }
+  });
+  document.querySelectorAll('[data-delete-post]').forEach(b => b.onclick = () => {
+    confirmAction('Delete this post from your library?', () => {
+      appState.posts = appState.posts.filter(p => p.id !== b.dataset.deletePost);
+      persist('posts'); renderLibrary(); showToast('Post deleted');
+    });
+  });
+}
+
+/* ================= SCHEDULE ================= */
+function renderSchedule() {
+  const scheduled = appState.posts.filter(p => p.scheduledDate).sort((a,b) => a.scheduledDate.localeCompare(b.scheduledDate));
+  document.getElementById('page-schedule').innerHTML = `
+    ${pageHeader('003','Schedule','Posts assigned to a date. Update status once you know how it landed.')}
+    ${scheduled.length === 0 ? '<div class="panel"><div class="empty-state">Nothing scheduled. Assign a date when saving a post from the Creator.</div></div>' :
+      `<div class="panel">` + scheduled.map(p => `
+        <div class="list-row">
+          <div class="list-row-main">
+            <div class="list-row-title">${fmtDate(p.scheduledDate)} — ${esc(p.niche)}</div>
+            <div class="list-row-meta">${esc(groupName(p.groupId) || 'no group assigned')}</div>
+          </div>
+          <div class="btn-row">
+            ${statusBadge(p.status)}
+            <select data-sched-status="${p.id}" style="width:auto;padding:4px 6px;font-size:11.5px;">
+              ${['scheduled','posted','pending','flagged'].map(s => `<option value="${s}" ${p.status===s?'selected':''}>${s}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+      `).join('') + `</div>`}
+  `;
+  document.querySelectorAll('[data-sched-status]').forEach(sel => sel.onchange = () => {
+    const post = appState.posts.find(p => p.id === sel.dataset.schedStatus);
+    if (post) {
+      post.status = sel.value;
+      if (sel.value === 'posted' && post.groupId) {
+        const grp = appState.groups.find(g => g.id === post.groupId);
+        if (grp) { grp.lastPostDate = todayISO(); persist('groups'); }
+      }
+      persist('posts'); renderSchedule(); showToast('Status updated');
+    }
+  });
+}
+
+/* ================= CLIENTS ================= */
+function renderClients() {
+  document.getElementById('page-clients').innerHTML = `
+    ${pageHeader('001','Clients',"Every prospect and client in the pipeline — what was offered, whether the site's built, and where the retainer conversation stands.")}
+    <div class="btn-row" style="margin-bottom:16px;"><button class="btn btn-primary" id="addClientBtn">+ Add client</button></div>
+    ${appState.clients.length === 0 ? '<div class="panel"><div class="empty-state">No clients yet. Add one when a prospect says yes.</div></div>' :
+      `<div class="panel"><table class="table">
+        <thead><tr><th>Business</th><th>Contact / Location</th><th>Offer</th><th>Site built</th><th>Retainer</th><th>Notes</th><th></th></tr></thead>
+        <tbody>
+        ${appState.clients.map(c => `
+          <tr>
+            <td style="font-weight:600;">${esc(c.businessName)}</td>
+            <td style="font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);">${esc(c.contactName) || '—'}${c.location ? '<br>' + esc(c.location) : ''}</td>
+            <td>${esc(offerTypeLabel(c.offerType))}</td>
+            <td>${buildStatusBadge(c.buildStatus)}</td>
+            <td>${retainerStatusBadge(c.retainerStatus)}${c.retainerTier ? `<div class="list-row-meta" style="margin-top:4px;">${esc(c.retainerTier)}</div>` : ''}</td>
+            <td class="notes-preview">${esc(c.notes) || '—'}</td>
+            <td><div class="btn-row">
+              <button class="btn btn-sm" data-edit-client="${c.id}">Edit</button>
+              <button class="btn btn-sm btn-ghost btn-danger" data-delete-client="${c.id}">Delete</button>
+            </div></td>
+          </tr>
+        `).join('')}
+        </tbody>
+      </table></div>`}
+  `;
+  document.getElementById('addClientBtn').onclick = openClientModal;
+  document.querySelectorAll('[data-edit-client]').forEach(b => b.onclick = () => openClientModal(b.dataset.editClient));
+  document.querySelectorAll('[data-delete-client]').forEach(b => b.onclick = () => {
+    confirmAction('Delete this client from the pipeline?', () => {
+      appState.clients = appState.clients.filter(c => c.id !== b.dataset.deleteClient);
+      persist('clients'); renderClients(); showToast('Client deleted');
+    });
+  });
+}
+function openClientModal(id) {
+  const editing = id ? appState.clients.find(c => c.id === id) : null;
+  openModal(`
+    <h3>${editing ? 'Edit client' : 'Add client'}</h3>
+    <div class="field"><label>Business name</label><input type="text" id="clBusiness" value="${editing ? esc(editing.businessName) : ''}" placeholder="e.g. HD Junk Removal & Demolition LLC" /></div>
+    <div class="field-row">
+      <div class="field"><label>Contact name</label><input type="text" id="clContact" value="${editing ? esc(editing.contactName) : ''}" placeholder="e.g. Tyler Morris" /></div>
+      <div class="field"><label>Location</label><input type="text" id="clLocation" value="${editing ? esc(editing.location) : ''}" placeholder="e.g. Sheffield, AL" /></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Source</label>
+        <select id="clSource">
+          ${[['fb-comment','FB comment'],['fb-dm','FB DM'],['fb-post-reply','FB post reply'],['other','Other']].map(([v,l]) => `<option value="${v}" ${editing && editing.source===v?'selected':''}>${l}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label>Offer made</label>
+        <select id="clOffer">
+          ${[['free-website','Free website'],['free-review-agent','Free review agent'],['both','Website + review agent'],['direct-pitch','Direct hosting pitch']].map(([v,l]) => `<option value="${v}" ${editing && editing.offerType===v?'selected':''}>${l}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Site built?</label>
+        <select id="clBuild">
+          ${[['not-started','Not started'],['in-progress','In progress'],['delivered','Delivered']].map(([v,l]) => `<option value="${v}" ${editing && editing.buildStatus===v?'selected':''}>${l}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label>Retainer status</label>
+        <select id="clRetainer">
+          ${[['not-pitched','Not pitched'],['pitched','Pitched'],['deferred','Deferred'],['active','Active'],['declined','Declined']].map(([v,l]) => `<option value="${v}" ${editing && editing.retainerStatus===v?'selected':''}>${l}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Retainer tier / price (if applicable)</label><input type="text" id="clTier" value="${editing ? esc(editing.retainerTier) : ''}" placeholder="e.g. $39/mo self-managed or $49/mo domain handled" /></div>
+    <div class="field"><label>Notes</label><textarea id="clNotes" placeholder="context, next step, anything worth remembering">${editing ? esc(editing.notes) : ''}</textarea></div>
+    <div class="btn-row" style="justify-content:flex-end;">
+      <button class="btn" id="clCancel">Cancel</button>
+      <button class="btn btn-primary" id="clSave">${editing ? 'Save changes' : 'Add client'}</button>
+    </div>
+  `);
+  document.getElementById('clCancel').onclick = closeModal;
+  document.getElementById('clSave').onclick = () => {
+    const businessName = document.getElementById('clBusiness').value.trim();
+    if (!businessName) { showToast('Business name is required'); return; }
+    const data = {
+      businessName,
+      contactName: document.getElementById('clContact').value.trim(),
+      location: document.getElementById('clLocation').value.trim(),
+      source: document.getElementById('clSource').value,
+      offerType: document.getElementById('clOffer').value,
+      buildStatus: document.getElementById('clBuild').value,
+      retainerStatus: document.getElementById('clRetainer').value,
+      retainerTier: document.getElementById('clTier').value.trim(),
+      notes: document.getElementById('clNotes').value.trim()
+    };
+    if (editing) { Object.assign(editing, data); }
+    else { appState.clients.unshift({ id: genId('client'), ...data, createdAt: new Date().toISOString() }); }
+    persist('clients'); closeModal(); renderClients(); showToast(editing ? 'Client updated' : 'Client added');
+  };
+}
+
+/* ================= GROUPS ================= */
+function renderGroups() {
+  document.getElementById('page-groups').innerHTML = `
+    ${pageHeader('001','Groups',"The Facebook groups you're working, and where each one stands.")}
+    <div class="btn-row" style="margin-bottom:16px;"><button class="btn btn-primary" id="addGroupBtn">+ Add group</button></div>
+    ${appState.groups.length === 0 ? '<div class="panel"><div class="empty-state">No groups yet. Add the ones you post outreach into.</div></div>' :
+      `<div class="panel"><table class="table">
+        <thead><tr><th>Group</th><th>Status</th><th>Rules / notes</th><th>Last post</th><th></th></tr></thead>
+        <tbody>
+        ${appState.groups.map(g => `
+          <tr>
+            <td style="font-weight:600;">${esc(g.name)}</td>
+            <td>${statusBadge(g.status)}</td>
+            <td class="notes-preview">${esc(g.rulesNotes) || '—'}</td>
+            <td style="font-family:var(--font-mono);font-size:12px;">${g.lastPostDate ? fmtDate(g.lastPostDate) : '—'}</td>
+            <td><div class="btn-row">
+              <button class="btn btn-sm" data-edit-group="${g.id}">Edit</button>
+              <button class="btn btn-sm btn-ghost btn-danger" data-delete-group="${g.id}">Delete</button>
+            </div></td>
+          </tr>
+        `).join('')}
+        </tbody>
+      </table></div>`}
+  `;
+  document.getElementById('addGroupBtn').onclick = openGroupModal;
+  document.querySelectorAll('[data-edit-group]').forEach(b => b.onclick = () => openGroupModal(b.dataset.editGroup));
+  document.querySelectorAll('[data-delete-group]').forEach(b => b.onclick = () => {
+    confirmAction('Delete this group? Posts linked to it will keep the reference but show as unknown.', () => {
+      appState.groups = appState.groups.filter(g => g.id !== b.dataset.deleteGroup);
+      persist('groups'); renderGroups(); showToast('Group deleted');
+    });
+  });
+}
+function openGroupModal(id) {
+  const editing = id ? appState.groups.find(g => g.id === id) : null;
+  openModal(`
+    <h3>${editing ? 'Edit group' : 'Add group'}</h3>
+    <div class="field"><label>Group name</label><input type="text" id="gName" value="${editing ? esc(editing.name) : ''}" placeholder="e.g. Junk Removal Owners Network" /></div>
+    <div class="field"><label>Status</label>
+      <select id="gStatus">${['active','pending','flagged','needs-review'].map(s => `<option value="${s}" ${editing && editing.status===s?'selected':''}>${s}</option>`).join('')}</select>
+    </div>
+    <div class="field"><label>Rules / notes</label><textarea id="gNotes" placeholder="e.g. no links allowed, admin is Hammad Younas, promo posts need approval">${editing ? esc(editing.rulesNotes) : ''}</textarea></div>
+    <div class="field"><label>Last post date</label><input type="date" id="gLastPost" value="${editing && editing.lastPostDate ? editing.lastPostDate : ''}" /></div>
+    <div class="btn-row" style="justify-content:flex-end;">
+      <button class="btn" id="gCancel">Cancel</button>
+      <button class="btn btn-primary" id="gSave">${editing ? 'Save changes' : 'Add group'}</button>
+    </div>
+  `);
+  document.getElementById('gCancel').onclick = closeModal;
+  document.getElementById('gSave').onclick = () => {
+    const name = document.getElementById('gName').value.trim();
+    if (!name) { showToast('Group name is required'); return; }
+    const status = document.getElementById('gStatus').value;
+    const rulesNotes = document.getElementById('gNotes').value.trim();
+    const lastPostDate = document.getElementById('gLastPost').value || null;
+    if (editing) { editing.name = name; editing.status = status; editing.rulesNotes = rulesNotes; editing.lastPostDate = lastPostDate; }
+    else { appState.groups.unshift({ id: genId('grp'), name, status, rulesNotes, lastPostDate, createdAt: new Date().toISOString() }); }
+    persist('groups'); closeModal(); renderGroups(); showToast(editing ? 'Group updated' : 'Group added');
+  };
+}
+
+/* ================= TODO ================= */
+function renderTodo() {
+  const cols = [ ['todo','To do'], ['in-progress','In progress'], ['done','Done'] ];
+  document.getElementById('page-todo').innerHTML = `
+    ${pageHeader('005','Todo','What still needs doing, sorted by stage.')}
+    <div class="btn-row" style="margin-bottom:16px;"><button class="btn btn-primary" id="addTodoBtn">+ Add task</button></div>
+    <div class="kanban">
+      ${cols.map(([key,label]) => {
+        const items = appState.todos.filter(t => t.status === key).sort((a,b) => (a.dueDate||'9999').localeCompare(b.dueDate||'9999'));
+        return `
+        <div class="kanban-col">
+          <div class="kanban-col-title">${label} <span class="kanban-count">${items.length}</span></div>
+          ${items.length === 0 ? '<div class="empty-state" style="padding:10px 2px;">Empty</div>' : items.map(t => `
+            <div class="task-card">
+              <div class="task-title">${esc(t.title)}</div>
+              <div class="task-meta">
+                ${priorityPill(t.priority)}
+                ${t.dueDate ? `<span>due ${fmtDate(t.dueDate)}</span>` : ''}
+                ${t.groupId ? `<span>· ${esc(groupName(t.groupId) || '')}</span>` : ''}
+              </div>
+              <div class="task-actions">
+                ${key !== 'todo' ? `<button class="btn btn-sm" data-move="${t.id}:${key==='done'?'in-progress':'todo'}">&larr;</button>` : ''}
+                ${key !== 'done' ? `<button class="btn btn-sm" data-move="${t.id}:${key==='todo'?'in-progress':'done'}">&rarr;</button>` : ''}
+                <button class="btn btn-sm btn-ghost btn-danger" data-del-todo="${t.id}">Delete</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+  document.getElementById('addTodoBtn').onclick = openTodoModal;
+  document.querySelectorAll('[data-move]').forEach(b => b.onclick = () => {
+    const [id, newStatus] = b.dataset.move.split(':');
+    const t = appState.todos.find(t => t.id === id);
+    if (t) { t.status = newStatus; persist('todos'); renderTodo(); }
+  });
+  document.querySelectorAll('[data-del-todo]').forEach(b => b.onclick = () => {
+    confirmAction('Delete this task?', () => {
+      appState.todos = appState.todos.filter(t => t.id !== b.dataset.delTodo);
+      persist('todos'); renderTodo(); showToast('Task deleted');
+    });
+  });
+}
+function openTodoModal() {
+  openModal(`
+    <h3>Add task</h3>
+    <div class="field"><label>Task</label><input type="text" id="tTitle" placeholder="e.g. follow up with Mike Daniels" /></div>
+    <div class="field-row">
+      <div class="field"><label>Due date</label><input type="date" id="tDue" /></div>
+      <div class="field"><label>Priority</label>
+        <select id="tPriority"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select>
+      </div>
+    </div>
+    <div class="field"><label>Linked group</label>
+      <select id="tGroup"><option value="">— none —</option>${appState.groups.map(g => `<option value="${g.id}">${esc(g.name)}</option>`).join('')}</select>
+    </div>
+    <div class="btn-row" style="justify-content:flex-end;">
+      <button class="btn" id="tCancel">Cancel</button>
+      <button class="btn btn-primary" id="tSave">Add task</button>
+    </div>
+  `);
+  document.getElementById('tCancel').onclick = closeModal;
+  document.getElementById('tSave').onclick = () => {
+    const title = document.getElementById('tTitle').value.trim();
+    if (!title) { showToast('Task title is required'); return; }
+    appState.todos.unshift({
+      id: genId('todo'), title,
+      dueDate: document.getElementById('tDue').value || null,
+      priority: document.getElementById('tPriority').value,
+      groupId: document.getElementById('tGroup').value || null,
+      status: 'todo', createdAt: new Date().toISOString()
+    });
+    persist('todos'); closeModal(); renderTodo(); showToast('Task added');
+  };
+}
+
+/* ================= PLAYBOOK ================= */
+function renderPlaybook() {
+  document.getElementById('page-playbook').innerHTML = `
+    ${pageHeader('REF','Playbook','The rules this whole system runs on. The generator follows this too.')}
+
+    <div class="panel pb-section">
+      <h3>Format — two versions, every time</h3>
+      <ul>
+        <li><strong>Gif post version</strong> — about 3 lines, short, strong hook, for background-image FB posts.</li>
+        <li><strong>Normal version</strong> — fuller length, explains a real benefit, still casual and human.</li>
+      </ul>
+    </div>
+
+    <div class="panel pb-section">
+      <h3>Tone &amp; style</h3>
+      <ul>
+        <li>Lowercase, casual, human-written — like a real person typing, not an ad</li>
+        <li>Short, punchy sentences</li>
+        <li>No AI-sounding language, no corporate phrasing, no hashtags/tags</li>
+        <li>Sounds like it belongs in a FB group feed, not a landing page</li>
+      </ul>
+    </div>
+
+    <div class="panel pb-section">
+      <h3>CTA rules</h3>
+      <ul>
+        <li>Never: "comment below," "dm me," "drop a [emoji] if…" — FB tends to flag/suppress these</li>
+        <li>Use soft, open-ended CTAs: "reach out if that's you," "send a message my way"</li>
+      </ul>
+    </div>
+
+    <div class="panel pb-section">
+      <h3>Offer framing</h3>
+      <ul>
+        <li>Lead with the outcome, not the mechanism ("more jobs," "more calls" — not "AI review agent")</li>
+        <li>State plainly: they own it, host anywhere, no strings, no hidden charges</li>
+        <li>"Only taking 2 clients" is a real operational constraint, not fake urgency</li>
+        <li>Feedback is the "price" of the free build — keeps it low-friction and non-salesy</li>
+        <li>Don't mention hosting costs or fine print in the post itself — save that for the DM</li>
+      </ul>
+    </div>
+
+    <div class="panel pb-section">
+      <h3>Word choice watch-outs</h3>
+      <p>"Free" is a commonly configured keyword filter in Facebook group Admin Assist. If a group keeps flagging posts, swap it for "at no cost" or "on the house."</p>
+    </div>
+
+    <div class="panel pb-section">
+      <h3>Compliance</h3>
+      <p>Always check a group's specific rules before posting or commenting for outreach.</p>
+    </div>
+
+    <div class="panel pb-section">
+      <h3>Avoiding "pending" status</h3>
+      <ul>
+        <li>No links or URLs in posts</li>
+        <li>Don't edit a post right after publishing</li>
+        <li>Avoid flagged/spammy keywords specific to a group</li>
+        <li>Don't cross-post identical text across multiple groups back-to-back — space it out over hours</li>
+        <li>Build genuine, non-promotional activity on the account over time</li>
+      </ul>
+    </div>
+
+    <div class="panel pb-section">
+      <h3>Core principles</h3>
+      <ul>
+        <li><strong>Sequence matters</strong> — one offer first, prove results, then layer in the next.</li>
+        <li><strong>Discovery before pitch</strong> — surface pain points before pivoting to a solution.</li>
+        <li><strong>Sell the outcome, not the mechanism</strong> — lead with what the owner gets.</li>
+        <li><strong>Genuine framing throughout</strong> — scarcity, free offers, and pricing stated honestly.</li>
+      </ul>
+    </div>
+  `;
+}
+
+/* ---------------- Init ---------------- */
+document.getElementById('navList').addEventListener('click', (e) => {
+  const item = e.target.closest('.nav-item');
+  if (item) switchPage(item.dataset.page);
+});
+document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+});
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+  if (e.target.id === 'modalOverlay') closeModal();
+});
+
+(async function init() {
+  await loadState();
+  document.querySelector('.nav-item[data-page="dashboard"]').classList.add('active');
+  switchPage('dashboard');
+})();
+</script>
+</body>
+</html>
