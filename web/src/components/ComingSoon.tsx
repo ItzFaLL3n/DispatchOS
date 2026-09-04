@@ -2,9 +2,8 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 
 /**
- * Scaffold placeholder so the nav is fully navigable from ticket 01. Individual
- * pages are replaced by their own tickets (03 clients, 12 todo, 13 groups,
- * 14 creator/schedule/library).
+ * Placeholder for the Phase 2 posting workflow (Creator, Schedule, Library) —
+ * ticket 14 keeps them as stubs on purpose, real pages are Phase 2 work.
  */
 export function ComingSoon({
   formNo,
