@@ -1,4 +1,5 @@
 import type { Client } from "@/lib/data/types";
+import { daysBetween, isoDay } from "@/lib/derive/dates";
 
 export type BoardColumn =
   | "check-in"
@@ -48,16 +49,10 @@ export function conversionColumn(client: Client): Placement {
   return { column: "check-in", dataWarning: true };
 }
 
-function daysUntil(isoDate: string, now: Date): number {
-  const target = Date.parse(`${isoDate}T00:00:00Z`);
-  const today = Date.parse(`${now.toISOString().slice(0, 10)}T00:00:00Z`);
-  return Math.round((target - today) / 86_400_000);
-}
-
 function deferralHint(client: Client, now: Date): string | null {
   if (client.retainerStatus !== "deferred") return null;
   if (!client.doNotPitchUntil) return "deferred — no re-check date set";
-  const days = daysUntil(client.doNotPitchUntil, now);
+  const days = daysBetween(isoDay(now), client.doNotPitchUntil);
   if (days <= 0) return "pitch window is open";
   return `pitch opens in ${days} day${days === 1 ? "" : "s"}`;
 }

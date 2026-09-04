@@ -931,6 +931,78 @@ textarea {
   color: var(--ink-faint);
 }
 
+/* --- Bridge gate ------------------------------------------------------------ */
+.gate-verdict {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1.4px solid currentColor;
+  margin-bottom: 14px;
+}
+.gate-verdict-ready {
+  color: var(--good);
+  background: color-mix(in srgb, var(--good) 8%, transparent);
+}
+.gate-verdict-not {
+  color: var(--bad);
+  background: color-mix(in srgb, var(--bad) 7%, transparent);
+}
+.gate-items {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+}
+.gate-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+.gate-item:last-child {
+  border-bottom: none;
+}
+.gate-box {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  border: 1.6px solid var(--line-strong);
+  border-radius: 3px;
+}
+.gate-box-met {
+  background: var(--good);
+  border-color: var(--good);
+}
+.gate-label {
+  flex: 1;
+  font-size: 13px;
+}
+.gate-source {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.gate-toggle {
+  display: inline;
+}
+.gate-log {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.gate-log .field-note {
+  padding-top: 0;
+}
+
 @media (max-width: 768px) {
   .mobile-menu-btn {
     display: flex;

@@ -75,6 +75,19 @@ export async function deleteClient(id: string): Promise<void> {
   if (error) throw new Error(`deleteClient(${id}): ${error.message}`);
 }
 
+/** Flip one of the two manual bridge-gate flags. */
+export async function setBridgeGateFlag(
+  id: string,
+  flag: "checkin_landed" | "nothing_asked_since_delivery",
+  value: boolean,
+): Promise<void> {
+  const { error } = await getSupabaseAdmin()
+    .from("clients")
+    .update({ [flag]: value })
+    .eq("id", id);
+  if (error) throw new Error(`setBridgeGateFlag(${id}, ${flag}): ${error.message}`);
+}
+
 /**
  * Apply a phase / sequence-state patch with its bookkeeping (see
  * computePhaseUpdate). The client update and the event inserts are sequential,

@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 import { ClientRecord } from "@/components/clients/ClientRecord";
 import { PhasePanel } from "@/components/clients/PhasePanel";
+import { BridgeGate } from "@/components/clients/BridgeGate";
 import { Timeline } from "@/components/clients/Timeline";
 import { DeleteClientButton } from "@/components/clients/DeleteClientButton";
 
@@ -44,6 +45,12 @@ export default async function ClientDetailPage({
           client={client}
         />
       </Panel>
+
+      {client.buildStatus === "delivered" ? (
+        <Panel title="Bridge gate — Phase 8.5" className="stack-panel">
+          <BridgeGate client={client} />
+        </Panel>
+      ) : null}
 
       <Panel
         title="Record"
