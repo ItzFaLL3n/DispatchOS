@@ -1,6 +1,7 @@
 import { BUILD_STATUSES, PHASE_SUBSTATES } from "@/lib/data/types";
 import type { BuildStatus, PhaseSubstate } from "@/lib/data/types";
 import { ValidationError } from "@/lib/data/errors";
+import { isIsoDate } from "@/lib/data/validate";
 
 /**
  * A partial update to a client's phase / sequence state. `undefined` = field
@@ -14,12 +15,6 @@ export type PhasePatch = {
   doNotPitchUntil?: string | null;
   buildStatus?: BuildStatus;
 };
-
-function isIsoDate(value: string): boolean {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-  const d = new Date(`${value}T00:00:00Z`);
-  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === value;
-}
 
 function dateField(fd: FormData, key: string, label: string): string | null | undefined {
   if (!fd.has(key)) return undefined;

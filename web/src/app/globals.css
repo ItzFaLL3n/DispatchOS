@@ -1069,6 +1069,106 @@ textarea {
   margin-top: 1px;
 }
 
+/* --- Todo --------------------------------------------------------------------- */
+.todo-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+.todo-form .field {
+  margin-bottom: 0;
+}
+.todo-title-field {
+  flex: 1 1 220px;
+}
+.todo-create {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 14px;
+}
+.todo-filters {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.todo-filters label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.todo-filters select {
+  width: auto;
+}
+.todo-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin-left: auto;
+}
+.todo-listing {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.todo-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.todo-item:last-child {
+  border-bottom: none;
+}
+.todo-stamps {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.todo-row {
+  display: block;
+}
+.todo-done .todo-title-field input {
+  text-decoration: line-through;
+  color: var(--ink-faint);
+}
+.todo-row-actions {
+  display: flex;
+  align-items: flex-end;
+}
+.todo-delete {
+  margin-top: 6px;
+}
+
+/* client record: open todos */
+.client-todos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.client-todo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line);
+}
+.client-todo-title {
+  flex: 1;
+  font-size: 13px;
+}
+.client-todo-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-faint);
+}
+.client-todo-manage {
+  padding-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
 @media (max-width: 768px) {
   .mobile-menu-btn {
     display: flex;

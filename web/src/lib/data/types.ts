@@ -59,6 +59,41 @@ export type ClientEvent = {
   createdAt: string;
 };
 
+export const TODO_PRIORITIES = ["low", "medium", "high"] as const;
+export type TodoPriority = (typeof TODO_PRIORITIES)[number];
+
+export const TODO_STATUSES = ["todo", "in-progress", "done"] as const;
+export type TodoStatus = (typeof TODO_STATUSES)[number];
+
+export type Todo = {
+  id: string;
+  clientId: string | null;
+  groupId: string | null;
+  title: string;
+  dueDate: string | null; // ISO date
+  priority: TodoPriority;
+  status: TodoStatus;
+  createdAt: string;
+};
+
+export const GROUP_STATUSES = [
+  "active",
+  "pending",
+  "flagged",
+  "needs-review",
+] as const;
+export type GroupStatus = (typeof GROUP_STATUSES)[number];
+
+export type Group = {
+  id: string;
+  name: string;
+  status: GroupStatus;
+  rulesNotes: string | null;
+  rulesUrl: string | null;
+  lastPostDate: string | null; // ISO date
+  createdAt: string;
+};
+
 export type Client = {
   id: string;
   slug: string;

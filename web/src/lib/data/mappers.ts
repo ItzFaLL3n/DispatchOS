@@ -1,5 +1,5 @@
 import { camelizeKeys } from "@/lib/data/camelize";
-import type { Client, ClientEvent } from "@/lib/data/types";
+import type { Client, ClientEvent, Group, Todo } from "@/lib/data/types";
 
 /**
  * Row → domain object. Mostly a key rename (see camelize), plus the few
@@ -16,4 +16,12 @@ export function mapClientRow(row: Record<string, unknown>): Client {
 /** client_events row → domain object. Pure key rename, no coercions. */
 export function mapClientEventRow(row: Record<string, unknown>): ClientEvent {
   return camelizeKeys<ClientEvent>(row);
+}
+
+export function mapTodoRow(row: Record<string, unknown>): Todo {
+  return camelizeKeys<Todo>(row);
+}
+
+export function mapGroupRow(row: Record<string, unknown>): Group {
+  return camelizeKeys<Group>(row);
 }
