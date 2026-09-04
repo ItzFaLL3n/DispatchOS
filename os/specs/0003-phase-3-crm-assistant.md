@@ -146,6 +146,11 @@ whatever client you're looking at:
   `web/src/lib/data/*` functions Phase 1/2 already built — no new query
   logic), and returns anything `always-confirm` (or auto mode off) to the UI
   as a pending card. Approving a card in the UI calls the same apply path.
+  **Revised during ticket 03**: `agent_runs` logs once per successful worker
+  call (matches Phase 2's cost-tracking convention — a pure-Q&A call with no
+  proposed actions still costs real tokens); `client_events`'s `ai-action`
+  logs once per *applied* action, skipped when the action already creates
+  its own timeline entry (`propose_create_client_event`).
 - **Guardrail classifier** — pure function,
   `web/src/lib/assistant/guardrail.ts`: `classifyAction(action) → 'auto-eligible' | 'always-confirm'`.
   Always-confirm: any `clients` write touching `retainerStatus`, `phase`,

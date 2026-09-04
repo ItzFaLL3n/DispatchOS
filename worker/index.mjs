@@ -177,15 +177,21 @@ Never suggest pitching a retainer, or any next action, to a client whose doNotPi
 
 Be direct and concise. This is an internal operating tool, not a customer-facing chat — skip the pleasantries.`;
 
-function buildPrompt(history, message) {
-  const lines = (history ?? []).map(
-    (m) => `${m.role === "user" ? "Operator" : "You"}: ${m.content}`,
-  );
+function buildPrompt(clientId, history, message) {
+  const lines = [];
+  if (clientId) {
+    lines.push(
+      `[Context: this conversation is scoped to client id ${clientId}. "This client" / "him" / "them" refers to this id — call get_client({ id: "${clientId}" }) yourself rather than asking which client.]`,
+    );
+  }
+  for (const m of history ?? []) {
+    lines.push(`${m.role === "user" ? "Operator" : "You"}: ${m.content}`);
+  }
   lines.push(`Operator: ${message}`);
   return lines.join("\n\n");
 }
 
-async function handleMessage({ history, message }) {
+async function handleMessage({ clientId, history, message }) {
   const proposedActions = [];
   let reply = "";
   let model = null;
@@ -193,7 +199,7 @@ async function handleMessage({ history, message }) {
   let tokensOut = null;
 
   const iter = query({
-    prompt: buildPrompt(history, message),
+    prompt: buildPrompt(clientId, history, message),
     options: {
       tools: [],
       mcpServers: { crm: crmServer },

@@ -10,11 +10,13 @@ const PUBLIC_PREFIXES = ["/login"];
 /**
  * Routes that skip the session-cookie gate because they enforce their own,
  * separate auth instead (a shared bearer secret, checked inside the route —
- * see lib/session.ts's safeEqual usage in app/api/assistant/*). These are
- * called by the CRM-assistant worker (spec 0003), which has no browser
- * session cookie to send. Not "public" — just gated a different way.
+ * see lib/session.ts's safeEqual usage). Only the worker-facing read route
+ * belongs here — /api/assistant/message and /api/assistant/approve are
+ * reached from the operator's own already-authenticated browser session
+ * (the UI panel), same as every other route, and must stay behind the
+ * cookie gate. Not "public" — just gated a different way.
  */
-const SEPARATELY_AUTHED_PREFIXES = ["/api/assistant"];
+const SEPARATELY_AUTHED_PREFIXES = ["/api/assistant/data"];
 
 export function isPublicPath(pathname: string): boolean {
   return PUBLIC_PREFIXES.some(

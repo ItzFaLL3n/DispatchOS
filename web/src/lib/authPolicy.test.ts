@@ -19,15 +19,20 @@ describe("isPublicPath", () => {
 });
 
 describe("isSeparatelyAuthedPath", () => {
-  it("treats /api/assistant (and its children) as separately authed", () => {
+  it("treats /api/assistant/data (and its children) as separately authed", () => {
     expect(isSeparatelyAuthedPath("/api/assistant/data")).toBe(true);
-    expect(isSeparatelyAuthedPath("/api/assistant/message")).toBe(true);
+    expect(isSeparatelyAuthedPath("/api/assistant/data/anything")).toBe(true);
+  });
+
+  it("keeps the operator-facing assistant routes behind the cookie gate", () => {
+    expect(isSeparatelyAuthedPath("/api/assistant/message")).toBe(false);
+    expect(isSeparatelyAuthedPath("/api/assistant/approve")).toBe(false);
   });
 
   it("treats everything else, including other /api routes, as not", () => {
     expect(isSeparatelyAuthedPath("/api/generate-post")).toBe(false);
     expect(isSeparatelyAuthedPath("/clients")).toBe(false);
-    expect(isSeparatelyAuthedPath("/api/assistantx")).toBe(false);
+    expect(isSeparatelyAuthedPath("/api/assistant/datax")).toBe(false);
   });
 });
 

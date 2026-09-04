@@ -36,6 +36,10 @@ export const serverEnv = {
   get workerSharedSecret() {
     return required("WORKER_SHARED_SECRET");
   },
+  /** Base URL of the deployed (or local, for dev) assistant worker. */
+  get assistantWorkerUrl() {
+    return required("ASSISTANT_WORKER_URL");
+  },
   /** Operator's own timezone for the client-local clock. Defaults to IST. */
   get operatorTz() {
     return process.env.OPERATOR_TZ || "Asia/Kolkata";
