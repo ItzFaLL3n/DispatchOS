@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createSessionToken } from "@/lib/session";
-import { decideAccess, isPublicPath } from "@/lib/authPolicy";
+import { decideAccess, isPublicPath, isSeparatelyAuthedPath } from "@/lib/authPolicy";
 
 const SECRET = "policy-test-secret";
 const validToken = createSessionToken(SECRET);
@@ -18,7 +18,27 @@ describe("isPublicPath", () => {
   });
 });
 
+describe("isSeparatelyAuthedPath", () => {
+  it("treats /api/assistant (and its children) as separately authed", () => {
+    expect(isSeparatelyAuthedPath("/api/assistant/data")).toBe(true);
+    expect(isSeparatelyAuthedPath("/api/assistant/message")).toBe(true);
+  });
+
+  it("treats everything else, including other /api routes, as not", () => {
+    expect(isSeparatelyAuthedPath("/api/generate-post")).toBe(false);
+    expect(isSeparatelyAuthedPath("/clients")).toBe(false);
+    expect(isSeparatelyAuthedPath("/api/assistantx")).toBe(false);
+  });
+});
+
 describe("decideAccess", () => {
+  it("allows a separately-authed path with no session cookie", () => {
+    expect(
+      decideAccess({ pathname: "/api/assistant/data", token: undefined, secret: SECRET }),
+    ).toEqual({ allow: true });
+  });
+
+
   it("allows a public path with no token", () => {
     expect(decideAccess({ pathname: "/login", token: undefined, secret: SECRET })).toEqual({
       allow: true,

@@ -32,6 +32,10 @@ export const serverEnv = {
   get anthropicApiKey() {
     return required("ANTHROPIC_API_KEY");
   },
+  /** Shared bearer secret between this app and the CRM-assistant worker (spec 0003). */
+  get workerSharedSecret() {
+    return required("WORKER_SHARED_SECRET");
+  },
   /** Operator's own timezone for the client-local clock. Defaults to IST. */
   get operatorTz() {
     return process.env.OPERATOR_TZ || "Asia/Kolkata";
