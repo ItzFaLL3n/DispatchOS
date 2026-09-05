@@ -33,7 +33,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <Sidebar
         open={menuOpen}
         onNavigate={() => setMenuOpen(false)}
-        onOpenAssistant={() => setAssistantOpen(true)}
+        onOpenAssistant={() => setAssistantOpen((v) => !v)}
       />
       <main className="main">{children}</main>
       <AssistantPanel open={assistantOpen} onClose={() => setAssistantOpen(false)} clientId={clientId} />

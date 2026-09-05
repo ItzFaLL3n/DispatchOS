@@ -200,18 +200,16 @@ export function AssistantPanel({
               DM thread
             </button>
           </div>
-          <div className="toggle-group">
-            {(["sonnet", "opus", "haiku"] as const).map((m) => (
-              <button
-                key={m}
-                type="button"
-                className={`toggle-opt ${model === m ? "active" : ""}`}
-                onClick={() => setModel(m)}
-              >
-                {m[0].toUpperCase() + m.slice(1)}
-              </button>
-            ))}
-          </div>
+          <select
+            className="assistant-model-select"
+            value={model}
+            onChange={(e) => setModel(e.target.value as "sonnet" | "opus" | "haiku")}
+            aria-label="Model"
+          >
+            <option value="sonnet">Sonnet</option>
+            <option value="opus">Opus</option>
+            <option value="haiku">Haiku</option>
+          </select>
         </div>
 
         <div className="assistant-messages">
