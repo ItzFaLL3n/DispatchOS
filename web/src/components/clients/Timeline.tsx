@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { addEventAction, resolveSignalAction } from "@/lib/data/eventActions";
+import { addEventAction, resolveSignalAction, resolveMistakeAction } from "@/lib/data/eventActions";
 import { Button } from "@/components/ui/Button";
 import { USER_EVENT_KINDS } from "@/lib/data/types";
 import type { ClientEvent, EventKind } from "@/lib/data/types";
@@ -14,6 +14,7 @@ const KIND_LABEL: Record<EventKind, string> = {
   "phase-change": "Phase change",
   system: "System",
   "ai-action": "AI action",
+  mistake: "Mistake",
 };
 
 function formatWhen(iso: string, tz: string): string {
@@ -94,15 +95,20 @@ export function Timeline({
             <div className="timeline-meta">
               <span className="timeline-kind">{KIND_LABEL[e.kind]}</span>
               <span className="timeline-when">{formatWhen(e.at, operatorTz)}</span>
-              {e.kind === "ascension-signal" ? (
+              {e.kind === "ascension-signal" || e.kind === "mistake" ? (
                 e.resolvedAt ? (
-                  <span className="timeline-resolved">resolved</span>
+                  <span className="timeline-resolved">
+                    {e.kind === "mistake" ? "addressed" : "resolved"}
+                  </span>
                 ) : (
-                  <form action={resolveSignalAction} className="timeline-resolve">
+                  <form
+                    action={e.kind === "mistake" ? resolveMistakeAction : resolveSignalAction}
+                    className="timeline-resolve"
+                  >
                     <input type="hidden" name="clientId" value={clientId} />
                     <input type="hidden" name="eventId" value={e.id} />
                     <button type="submit" className="btn btn-ghost btn-sm">
-                      Mark resolved
+                      {e.kind === "mistake" ? "Mark addressed" : "Mark resolved"}
                     </button>
                   </form>
                 )

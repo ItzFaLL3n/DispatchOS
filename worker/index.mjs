@@ -130,10 +130,10 @@ const proposeTools = [
   ),
   tool(
     "propose_create_client_event",
-    "Propose logging a timeline entry on a client (a note, touch, or ascension-signal). Does not log it — queues a proposal.",
+    "Propose logging a timeline entry on a client (a note, touch, ascension-signal, or mistake). Does not log it — queues a proposal.",
     {
       clientId: z.string(),
-      kind: z.enum(["note", "touch", "ascension-signal"]),
+      kind: z.enum(["note", "touch", "ascension-signal", "mistake"]),
       body: z.string(),
     },
     async () => textResult({ proposed: true }),

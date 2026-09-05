@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { listClients } from "@/lib/data/clients";
-import { listOpenAscensionSignalClientIds } from "@/lib/data/events";
+import { listOpenAscensionSignalClientIds, listRecentMistakes } from "@/lib/data/events";
+import { getSettings } from "@/lib/data/settings";
 import { serverEnv } from "@/lib/env";
 import {
   BOARD_COLUMNS,
@@ -12,18 +13,25 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 import { ContactWindow } from "@/components/ContactWindow";
 import { DashboardNags } from "@/components/DashboardNags";
+import { GoalPanel } from "@/components/GoalPanel";
+import { MistakesList } from "@/components/MistakesList";
 import type { Client } from "@/lib/data/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [clients, openSignalIds] = await Promise.all([
+  const [clients, openSignalIds, mistakes, settings] = await Promise.all([
     listClients(),
     listOpenAscensionSignalClientIds(),
+    listRecentMistakes(),
+    getSettings(),
   ]);
   const openSignalClientIds = new Set(openSignalIds);
   const operatorTz = serverEnv.operatorTz;
   const now = new Date();
+  const currentMrr = clients
+    .filter((c) => c.retainerStatus === "active")
+    .reduce((sum, c) => sum + c.mrr, 0);
 
   const inBuild = clients.filter((c) => c.buildStatus !== "delivered");
   const byColumn = new Map<BoardColumn, Client[]>(
@@ -41,6 +49,15 @@ export default async function DashboardPage() {
         title="Dashboard"
         sub="Delivered clients by where they sit in the post-delivery sequence. Clients still in build sit in the strip below."
       />
+
+      <div className="dashboard-goal-row">
+        <Panel title="Revenue goal">
+          <GoalPanel currentMrr={currentMrr} mrrGoal={settings.mrrGoal} />
+        </Panel>
+        <Panel title={`Open mistakes (${mistakes.length})`}>
+          <MistakesList mistakes={mistakes} />
+        </Panel>
+      </div>
 
       <div className="board">
         {BOARD_COLUMNS.map((col) => {

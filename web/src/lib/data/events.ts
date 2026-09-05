@@ -54,3 +54,37 @@ export async function resolveAscensionSignal(eventId: string): Promise<void> {
 
   if (error) throw new Error(`resolveAscensionSignal(${eventId}): ${error.message}`);
 }
+
+/** Marks an open mistake addressed. No-op if it is not an open mistake. */
+export async function resolveMistake(eventId: string): Promise<void> {
+  const { error } = await getSupabaseAdmin()
+    .from("client_events")
+    .update({ resolved_at: new Date().toISOString() })
+    .eq("id", eventId)
+    .eq("kind", "mistake")
+    .is("resolved_at", null);
+
+  if (error) throw new Error(`resolveMistake(${eventId}): ${error.message}`);
+}
+
+export type RecentMistake = ClientEvent & { businessName: string };
+
+/** Most recent unresolved mistakes across every client, for the dashboard. */
+export async function listRecentMistakes(limit = 8): Promise<RecentMistake[]> {
+  const { data, error } = await getSupabaseAdmin()
+    .from("client_events")
+    .select("*, clients(business_name)")
+    .eq("kind", "mistake")
+    .is("resolved_at", null)
+    .order("at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw new Error(`listRecentMistakes: ${error.message}`);
+  return (data ?? []).map((row) => {
+    const r = row as Record<string, unknown> & { clients?: { business_name?: string } | null };
+    return {
+      ...mapClientEventRow(r),
+      businessName: r.clients?.business_name ?? "Unknown client",
+    };
+  });
+}

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClientEvent, resolveAscensionSignal } from "@/lib/data/events";
+import { createClientEvent, resolveAscensionSignal, resolveMistake } from "@/lib/data/events";
 import { parseEventForm } from "@/lib/data/eventInput";
 import { messageFor, type FormState } from "@/lib/data/errors";
 
@@ -27,4 +27,13 @@ export async function resolveSignalAction(formData: FormData): Promise<void> {
   if (!clientId || !eventId) return;
   await resolveAscensionSignal(eventId);
   revalidatePath(`/clients/${clientId}`);
+}
+
+export async function resolveMistakeAction(formData: FormData): Promise<void> {
+  const clientId = String(formData.get("clientId") ?? "");
+  const eventId = String(formData.get("eventId") ?? "");
+  if (!clientId || !eventId) return;
+  await resolveMistake(eventId);
+  revalidatePath(`/clients/${clientId}`);
+  revalidatePath("/");
 }

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getClient } from "@/lib/data/clients";
+import { PHASE_LABELS } from "@/lib/data/types";
 import { listClientEvents } from "@/lib/data/events";
 import { listOpenTodosForClient } from "@/lib/data/todos";
 import { serverEnv } from "@/lib/env";
@@ -34,7 +35,7 @@ export default async function ClientDetailPage({
       <PageHeader
         formNo="001"
         title={client.businessName}
-        sub={`${client.slug} · phase ${client.phase} · ${client.buildStatus}`}
+        sub={`${client.slug} · phase ${client.phase} — ${PHASE_LABELS[client.phase] ?? "?"} · ${client.buildStatus}`}
       />
       <div className="btn-row record-toolbar">
         <Link href="/clients" className="btn btn-ghost btn-sm">

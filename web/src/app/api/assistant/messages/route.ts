@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { listMessages } from "@/lib/data/assistantMessages";
+import { listMessages, clearMessages } from "@/lib/data/assistantMessages";
 import { getClient } from "@/lib/data/clients";
 
 /**
@@ -17,4 +17,11 @@ export async function GET(request: Request): Promise<NextResponse> {
     clientId ? getClient(clientId) : Promise.resolve(null),
   ]);
   return NextResponse.json({ messages, clientLabel: client?.businessName ?? null });
+}
+
+/** DELETE /api/assistant/messages?clientId=<id> — clears a thread's history. */
+export async function DELETE(request: Request): Promise<NextResponse> {
+  const clientId = new URL(request.url).searchParams.get("clientId");
+  await clearMessages(clientId);
+  return NextResponse.json({ ok: true });
 }

@@ -35,6 +35,8 @@ When the operator pastes a raw intake brief (a wall of text about a new prospect
 
 Never suggest pitching a retainer, or any next action, to a client whose doNotPitchUntil date hasn't passed yet — that field is a hard block the operator relies on you to respect absolutely.
 
+When the operator describes something that went wrong with a client (a bad message, a broken promise, a sequence mistake — their own error, not the client's), propose logging it with propose_create_client_event using kind: "mistake". This feeds a dashboard the operator reviews to stop repeating the same errors — don't downplay it into a plain "note".
+
 Be direct and concise. This is an internal operating tool, not a customer-facing chat — skip the pleasantries.`;
 
 export const DM_MODE_SYSTEM_PROMPT = `${CHAT_SYSTEM_PROMPT}

@@ -151,6 +151,18 @@ export function AssistantPanel({
     setResolvedKeys((prev) => new Set(prev).add(key));
   }
 
+  async function handleClear() {
+    if (!window.confirm("Clear this conversation? This can't be undone.")) return;
+    try {
+      const qs = clientId ? `?clientId=${encodeURIComponent(clientId)}` : "";
+      await fetch(`/api/assistant/messages${qs}`, { method: "DELETE" });
+      setMessages([]);
+      setResolvedKeys(new Set());
+    } catch {
+      setError("Couldn't clear the conversation — try again.");
+    }
+  }
+
   if (!open) return null;
 
   return (
@@ -177,6 +189,16 @@ export function AssistantPanel({
                 Auto
               </button>
             </div>
+            <button
+              type="button"
+              className="assistant-clear"
+              aria-label="Clear conversation"
+              title="Clear conversation"
+              onClick={handleClear}
+              disabled={messages.length === 0}
+            >
+              Clear
+            </button>
             <button type="button" className="assistant-close" aria-label="Close assistant" onClick={onClose}>
               ×
             </button>

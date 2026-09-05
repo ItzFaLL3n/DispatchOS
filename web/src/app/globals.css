@@ -815,6 +815,9 @@ textarea {
 .timeline-system {
   border-left-color: var(--ink-faint);
 }
+.timeline-mistake {
+  border-left-color: var(--bad);
+}
 .timeline-meta {
   display: flex;
   align-items: center;
@@ -932,6 +935,91 @@ textarea {
 }
 .stack-panel-top {
   margin-top: 16px;
+}
+.dashboard-goal-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.goal-panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.goal-panel-figures {
+  font-family: var(--font-mono);
+}
+.goal-current {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.goal-sep {
+  color: var(--ink-faint);
+  margin: 0 4px;
+}
+.goal-target {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.goal-bar-track {
+  height: 8px;
+  background: var(--paper);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.goal-bar-fill {
+  height: 100%;
+  background: var(--good);
+}
+.goal-panel-pct {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-faint);
+  margin-top: 6px;
+}
+.goal-edit-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.goal-edit-form input[type="number"] {
+  width: 120px;
+}
+.mistake-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.mistake-item {
+  padding: 10px 0 10px 12px;
+  border-left: 2px solid var(--bad);
+  border-bottom: 1px solid var(--line);
+}
+.mistake-item:last-child {
+  border-bottom: none;
+}
+.mistake-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin-bottom: 4px;
+}
+.mistake-item-body {
+  font-size: 13px;
+  color: var(--ink);
+  margin-bottom: 6px;
 }
 .inbuild-strip {
   display: flex;
@@ -1353,6 +1441,27 @@ textarea {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+.assistant-clear {
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  cursor: pointer;
+  padding: 5px 10px;
+}
+.assistant-clear:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--ink);
+}
+.assistant-clear:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 .assistant-close {
   background: transparent;

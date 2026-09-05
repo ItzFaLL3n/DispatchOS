@@ -27,6 +27,15 @@ export async function listMessages(clientId: string | null): Promise<AssistantMe
   return (data ?? []).map((r) => mapAssistantMessageRow(r as Record<string, unknown>));
 }
 
+/** Deletes every message in a thread — `clientId: null` clears the general thread. */
+export async function clearMessages(clientId: string | null): Promise<void> {
+  let query = getSupabaseAdmin().from("assistant_messages").delete();
+  query = clientId === null ? query.is("client_id", null) : query.eq("client_id", clientId);
+
+  const { error } = await query;
+  if (error) throw new Error(`clearMessages(${clientId}): ${error.message}`);
+}
+
 export async function appendMessage(input: AppendMessageInput): Promise<AssistantMessage> {
   const { data, error } = await getSupabaseAdmin()
     .from("assistant_messages")

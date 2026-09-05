@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import { applyPhaseAction, type FormState } from "@/lib/data/clientActions";
 import { Button } from "@/components/ui/Button";
-import { BUILD_STATUSES } from "@/lib/data/types";
+import { BUILD_STATUSES, PHASE_LABELS } from "@/lib/data/types";
 import type { Client } from "@/lib/data/types";
 
 const PHASES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -45,7 +45,7 @@ export function PhasePanel({ client }: { client: Client }) {
           >
             {PHASES.map((p) => (
               <option key={p} value={p}>
-                {p}
+                {p} — {PHASE_LABELS[p]}
               </option>
             ))}
           </select>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { listClients } from "@/lib/data/clients";
 import { serverEnv } from "@/lib/env";
 import { RETAINER_TONE } from "@/lib/clientDisplay";
+import { PHASE_LABELS } from "@/lib/data/types";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 import { Stamp } from "@/components/ui/Stamp";
@@ -60,7 +61,7 @@ export default async function ClientsPage() {
                     />
                   </td>
                   <td>
-                    {c.phase}
+                    {c.phase} — {PHASE_LABELS[c.phase] ?? "?"}
                     {c.phaseSubstate ? ` · ${c.phaseSubstate}` : ""}
                   </td>
                   <td>

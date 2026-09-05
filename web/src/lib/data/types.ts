@@ -36,6 +36,20 @@ export type RetainerStatus = (typeof RETAINER_STATUSES)[number];
 export const PHASE_SUBSTATES = ["bridge", "domain-trigger"] as const;
 export type PhaseSubstate = (typeof PHASE_SUBSTATES)[number];
 
+/** Names from os/knowledge/intake-playbook.md — keep in sync. */
+export const PHASE_LABELS: Record<number, string> = {
+  1: "Confirm & kick off",
+  2: "Services + contact info",
+  3: "Photos & socials",
+  4: "Site preferences",
+  5: "Domain check",
+  6: "Mid-build check-in",
+  7: "Delivery",
+  8: "Zero-ask check-in",
+  9: "Retainer offer",
+  10: "Growth System upgrade",
+};
+
 export const EVENT_KINDS = [
   "note",
   "touch",
@@ -43,11 +57,12 @@ export const EVENT_KINDS = [
   "phase-change",
   "system",
   "ai-action",
+  "mistake",
 ] as const;
 export type EventKind = (typeof EVENT_KINDS)[number];
 
 /** The kinds a person can add by hand; phase-change / system are written by the app. */
-export const USER_EVENT_KINDS = ["note", "touch", "ascension-signal"] as const;
+export const USER_EVENT_KINDS = ["note", "touch", "ascension-signal", "mistake"] as const;
 export type UserEventKind = (typeof USER_EVENT_KINDS)[number];
 
 export type ClientEvent = {
@@ -120,6 +135,10 @@ export type AssistantMessage = {
   content: string;
   proposedActions: unknown;
   createdAt: string;
+};
+
+export type AppSettings = {
+  mrrGoal: number;
 };
 
 export type Client = {
