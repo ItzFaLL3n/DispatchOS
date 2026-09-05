@@ -17,7 +17,9 @@ export async function getSettings(): Promise<AppSettings> {
     .maybeSingle();
 
   if (error) {
-    if (error.code === "42P01") return { mrrGoal: DEFAULT_MRR_GOAL };
+    if (error.code === "42P01" || error.code === "PGRST205") {
+      return { mrrGoal: DEFAULT_MRR_GOAL };
+    }
     throw new Error(`getSettings: ${error.message}`);
   }
   return { mrrGoal: data ? Number(data.mrr_goal) : DEFAULT_MRR_GOAL };

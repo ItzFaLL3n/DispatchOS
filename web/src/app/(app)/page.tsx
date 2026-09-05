@@ -2,6 +2,7 @@ import Link from "next/link";
 import { listClients } from "@/lib/data/clients";
 import { listOpenAscensionSignalClientIds, listRecentMistakes } from "@/lib/data/events";
 import { getSettings } from "@/lib/data/settings";
+import { recordMrrSnapshot, listMrrSnapshots } from "@/lib/data/mrrSnapshots";
 import { serverEnv } from "@/lib/env";
 import {
   BOARD_COLUMNS,
@@ -15,6 +16,7 @@ import { ContactWindow } from "@/components/ContactWindow";
 import { DashboardNags } from "@/components/DashboardNags";
 import { GoalPanel } from "@/components/GoalPanel";
 import { MistakesList } from "@/components/MistakesList";
+import { MrrTrendChart } from "@/components/MrrTrendChart";
 import { PipelineChart } from "@/components/PipelineChart";
 import type { Client } from "@/lib/data/types";
 
@@ -33,6 +35,8 @@ export default async function DashboardPage() {
   const currentMrr = clients
     .filter((c) => c.retainerStatus === "active")
     .reduce((sum, c) => sum + c.mrr, 0);
+  await recordMrrSnapshot(currentMrr);
+  const mrrHistory = await listMrrSnapshots(30);
 
   const phaseCounts: Record<number, number> = {};
   for (const c of clients) {
@@ -64,6 +68,10 @@ export default async function DashboardPage() {
           <MistakesList mistakes={mistakes} />
         </Panel>
       </div>
+
+      <Panel title="MRR trend" className="stack-panel-top">
+        <MrrTrendChart snapshots={mrrHistory} />
+      </Panel>
 
       <Panel title="Pipeline by phase" className="stack-panel-top">
         <PipelineChart counts={phaseCounts} />
