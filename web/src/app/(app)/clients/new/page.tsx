@@ -22,9 +22,9 @@ export default function NewClientPage() {
         sub="Business name, source, offer type and build status are required. Everything else can be filled in later."
       />
       <div className="btn-row record-toolbar">
-        <Link href="/clients" className="btn btn-ghost btn-sm">
-          ← All clients
-        </Link>
+        <Button variant="ghost" size="sm" asChild>
+          <Link href="/clients">← All clients</Link>
+        </Button>
       </div>
       <Panel>
         <form action={formAction}>

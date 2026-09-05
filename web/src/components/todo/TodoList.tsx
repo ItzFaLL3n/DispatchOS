@@ -7,6 +7,15 @@ import {
   updateTodoAction,
 } from "@/lib/data/todoActions";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Stamp, type StampTone } from "@/components/ui/Stamp";
 import { TODO_PRIORITIES, TODO_STATUSES } from "@/lib/data/types";
 import type { Todo, TodoPriority, TodoStatus } from "@/lib/data/types";
@@ -38,16 +47,55 @@ function LinkPicker({
 }) {
   return (
     <div className="field">
-      <label>{label}</label>
-      <select name={name} defaultValue={value ?? ""}>
-        <option value="">—</option>
-        {options.map((o) => (
-          <option key={o.id} value={o.id}>
-            {o.label}
-          </option>
-        ))}
-      </select>
+      <Label>{label}</Label>
+      <Select defaultValue={value ?? "none"} name={name}>
+        <SelectTrigger className="w-full">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="none">—</SelectItem>
+          {options.map((o) => (
+            <SelectItem key={o.id} value={o.id}>
+              {o.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
+  );
+}
+
+function PrioritySelect({ defaultValue }: { defaultValue: TodoPriority }) {
+  return (
+    <Select defaultValue={defaultValue} name="priority">
+      <SelectTrigger className="w-full">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {TODO_PRIORITIES.map((p) => (
+          <SelectItem key={p} value={p}>
+            {p}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
+function StatusSelect({ defaultValue }: { defaultValue: TodoStatus }) {
+  return (
+    <Select defaultValue={defaultValue} name="status">
+      <SelectTrigger className="w-full">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {TODO_STATUSES.map((s) => (
+          <SelectItem key={s} value={s}>
+            {s}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 
@@ -70,28 +118,20 @@ function TodoRow({
       <form action={action} className="todo-form">
         <input type="hidden" name="id" value={todo.id} />
         <div className="field todo-title-field">
-          <label>Title</label>
-          <input type="text" name="title" defaultValue={todo.title} required />
+          <Label>Title</Label>
+          <Input type="text" name="title" defaultValue={todo.title} required />
         </div>
         <div className="field">
-          <label>Due</label>
-          <input type="date" name="dueDate" defaultValue={todo.dueDate ?? ""} />
+          <Label>Due</Label>
+          <Input type="date" name="dueDate" defaultValue={todo.dueDate ?? ""} />
         </div>
         <div className="field">
-          <label>Priority</label>
-          <select name="priority" defaultValue={todo.priority}>
-            {TODO_PRIORITIES.map((p) => (
-              <option key={p}>{p}</option>
-            ))}
-          </select>
+          <Label>Priority</Label>
+          <PrioritySelect defaultValue={todo.priority} />
         </div>
         <div className="field">
-          <label>Status</label>
-          <select name="status" defaultValue={todo.status}>
-            {TODO_STATUSES.map((s) => (
-              <option key={s}>{s}</option>
-            ))}
-          </select>
+          <Label>Status</Label>
+          <StatusSelect defaultValue={todo.status} />
         </div>
         <LinkPicker name="clientId" label="Client" options={clients} value={todo.clientId} />
         <LinkPicker name="groupId" label="Group" options={groups} value={todo.groupId} />
@@ -103,9 +143,9 @@ function TodoRow({
       </form>
       <form action={deleteTodoAction} className="todo-delete">
         <input type="hidden" name="id" value={todo.id} />
-        <button type="submit" className="btn btn-ghost btn-sm btn-danger">
+        <Button type="submit" variant="ghost" size="sm">
           Delete
-        </button>
+        </Button>
       </form>
       {state.error ? <div className="form-error">{state.error}</div> : null}
     </div>
@@ -138,20 +178,16 @@ export function TodoList({
     <>
       <form action={createAction} className="todo-form todo-create">
         <div className="field todo-title-field">
-          <label htmlFor="new-title">New todo</label>
-          <input id="new-title" type="text" name="title" required autoComplete="off" />
+          <Label htmlFor="new-title">New todo</Label>
+          <Input id="new-title" type="text" name="title" required autoComplete="off" />
         </div>
         <div className="field">
-          <label htmlFor="new-due">Due</label>
-          <input id="new-due" type="date" name="dueDate" />
+          <Label htmlFor="new-due">Due</Label>
+          <Input id="new-due" type="date" name="dueDate" />
         </div>
         <div className="field">
-          <label htmlFor="new-priority">Priority</label>
-          <select id="new-priority" name="priority" defaultValue="medium">
-            {TODO_PRIORITIES.map((p) => (
-              <option key={p}>{p}</option>
-            ))}
-          </select>
+          <Label htmlFor="new-priority">Priority</Label>
+          <PrioritySelect defaultValue="medium" />
         </div>
         <LinkPicker name="clientId" label="Client" options={clients} />
         <LinkPicker name="groupId" label="Group" options={groups} />
@@ -166,32 +202,44 @@ export function TodoList({
       </form>
 
       <div className="todo-filters">
-        <label>
-          Status
-          <select
+        <div className="field">
+          <Label htmlFor="status-filter">Status</Label>
+          <Select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as TodoStatus | "all")}
+            onValueChange={(v) => setStatusFilter(v as TodoStatus | "all")}
           >
-            <option value="all">all</option>
-            {TODO_STATUSES.map((s) => (
-              <option key={s}>{s}</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Priority
-          <select
+            <SelectTrigger id="status-filter" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">all</SelectItem>
+              {TODO_STATUSES.map((s) => (
+                <SelectItem key={s} value={s}>
+                  {s}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="field">
+          <Label htmlFor="priority-filter">Priority</Label>
+          <Select
             value={priorityFilter}
-            onChange={(e) =>
-              setPriorityFilter(e.target.value as TodoPriority | "all")
-            }
+            onValueChange={(v) => setPriorityFilter(v as TodoPriority | "all")}
           >
-            <option value="all">all</option>
-            {TODO_PRIORITIES.map((p) => (
-              <option key={p}>{p}</option>
-            ))}
-          </select>
-        </label>
+            <SelectTrigger id="priority-filter" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">all</SelectItem>
+              {TODO_PRIORITIES.map((p) => (
+                <SelectItem key={p} value={p}>
+                  {p}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <span className="todo-count">
           {shown.length} of {todos.length}
         </span>

@@ -1,3 +1,13 @@
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   BUILD_STATUSES,
   CLIENT_SOURCES,
@@ -19,8 +29,8 @@ export function ClientFormFields({ client }: { client?: Client }) {
   return (
     <>
       <div className="field">
-        <label htmlFor="businessName">Business name</label>
-        <input
+        <Label htmlFor="businessName">Business name</Label>
+        <Input
           id="businessName"
           name="businessName"
           type="text"
@@ -31,91 +41,103 @@ export function ClientFormFields({ client }: { client?: Client }) {
 
       <div className="field-row">
         <div className="field">
-          <label htmlFor="contactName">Contact name</label>
-          <input id="contactName" name="contactName" type="text" defaultValue={v(client?.contactName)} />
+          <Label htmlFor="contactName">Contact name</Label>
+          <Input id="contactName" name="contactName" type="text" defaultValue={v(client?.contactName)} />
         </div>
         <div className="field">
-          <label htmlFor="location">Location / service area</label>
-          <input id="location" name="location" type="text" defaultValue={v(client?.location)} />
-        </div>
-      </div>
-
-      <div className="field-row">
-        <div className="field">
-          <label htmlFor="source">Source</label>
-          <select id="source" name="source" defaultValue={v(client?.source)} required={!client}>
-            <option value="">— select —</option>
-            {CLIENT_SOURCES.map((s) => (
-              <option key={s} value={s}>{s}</option>
-            ))}
-          </select>
-        </div>
-        <div className="field">
-          <label htmlFor="offerType">Offer type</label>
-          <select id="offerType" name="offerType" defaultValue={v(client?.offerType)} required={!client}>
-            <option value="">— select —</option>
-            {OFFER_TYPES.map((o) => (
-              <option key={o} value={o}>{o}</option>
-            ))}
-          </select>
+          <Label htmlFor="location">Location / service area</Label>
+          <Input id="location" name="location" type="text" defaultValue={v(client?.location)} />
         </div>
       </div>
 
       <div className="field-row">
         <div className="field">
-          <label htmlFor="buildStatus">Build status</label>
-          <select
-            id="buildStatus"
-            name="buildStatus"
-            defaultValue={client?.buildStatus ?? "not-started"}
-            required
-          >
-            {BUILD_STATUSES.map((b) => (
-              <option key={b} value={b}>{b}</option>
-            ))}
-          </select>
+          <Label htmlFor="source">Source</Label>
+          <Select defaultValue={v(client?.source) || undefined} name="source">
+            <SelectTrigger id="source" className="w-full">
+              <SelectValue placeholder="— select —" />
+            </SelectTrigger>
+            <SelectContent>
+              {CLIENT_SOURCES.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="field">
-          <label htmlFor="retainerStatus">Retainer status</label>
-          <select
-            id="retainerStatus"
-            name="retainerStatus"
-            defaultValue={client?.retainerStatus ?? "not-pitched"}
-            required
-          >
-            {RETAINER_STATUSES.map((r) => (
-              <option key={r} value={r}>{r}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className="field-row">
-        <div className="field">
-          <label htmlFor="retainerTier">Retainer tier</label>
-          <input id="retainerTier" name="retainerTier" type="text" defaultValue={v(client?.retainerTier)} />
-        </div>
-        <div className="field">
-          <label htmlFor="mrr">MRR</label>
-          <input id="mrr" name="mrr" type="number" min="0" step="1" defaultValue={v(client?.mrr ?? 0)} />
+          <Label htmlFor="offerType">Offer type</Label>
+          <Select defaultValue={v(client?.offerType) || undefined} name="offerType">
+            <SelectTrigger id="offerType" className="w-full">
+              <SelectValue placeholder="— select —" />
+            </SelectTrigger>
+            <SelectContent>
+              {OFFER_TYPES.map((o) => (
+                <SelectItem key={o} value={o}>{o}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
       <div className="field-row">
         <div className="field">
-          <label htmlFor="timezone">Timezone</label>
-          <select id="timezone" name="timezone" defaultValue={v(client?.timezone)}>
-            <option value="">— none —</option>
-            {TIMEZONES.map((tz) => (
-              <option key={tz} value={tz}>
-                {tz}
-              </option>
-            ))}
-          </select>
+          <Label htmlFor="buildStatus">Build status</Label>
+          <Select defaultValue={client?.buildStatus ?? "not-started"} name="buildStatus">
+            <SelectTrigger id="buildStatus" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {BUILD_STATUSES.map((b) => (
+                <SelectItem key={b} value={b}>{b}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="field">
-          <label htmlFor="contactHours">Contact hours note</label>
-          <input
+          <Label htmlFor="retainerStatus">Retainer status</Label>
+          <Select defaultValue={client?.retainerStatus ?? "not-pitched"} name="retainerStatus">
+            <SelectTrigger id="retainerStatus" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {RETAINER_STATUSES.map((r) => (
+                <SelectItem key={r} value={r}>{r}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="field-row">
+        <div className="field">
+          <Label htmlFor="retainerTier">Retainer tier</Label>
+          <Input id="retainerTier" name="retainerTier" type="text" defaultValue={v(client?.retainerTier)} />
+        </div>
+        <div className="field">
+          <Label htmlFor="mrr">MRR</Label>
+          <Input id="mrr" name="mrr" type="number" min="0" step="1" defaultValue={v(client?.mrr ?? 0)} />
+        </div>
+      </div>
+
+      <div className="field-row">
+        <div className="field">
+          <Label htmlFor="timezone">Timezone</Label>
+          <Select defaultValue={v(client?.timezone) || undefined} name="timezone">
+            <SelectTrigger id="timezone" className="w-full">
+              <SelectValue placeholder="— none —" />
+            </SelectTrigger>
+            <SelectContent>
+              {TIMEZONES.map((tz) => (
+                <SelectItem key={tz} value={tz}>
+                  {tz}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="field">
+          <Label htmlFor="contactHours">Contact hours note</Label>
+          <Input
             id="contactHours"
             name="contactHours"
             type="text"
@@ -127,28 +149,28 @@ export function ClientFormFields({ client }: { client?: Client }) {
 
       <div className="field-row">
         <div className="field">
-          <label htmlFor="siteUrl">Site URL</label>
-          <input id="siteUrl" name="siteUrl" type="text" defaultValue={v(client?.siteUrl)} />
+          <Label htmlFor="siteUrl">Site URL</Label>
+          <Input id="siteUrl" name="siteUrl" type="text" defaultValue={v(client?.siteUrl)} />
         </div>
         <div className="field">
-          <label htmlFor="domain">Domain</label>
-          <input id="domain" name="domain" type="text" defaultValue={v(client?.domain)} />
+          <Label htmlFor="domain">Domain</Label>
+          <Input id="domain" name="domain" type="text" defaultValue={v(client?.domain)} />
         </div>
       </div>
 
       <div className="field">
-        <label htmlFor="paypalPlanUrl">PayPal plan URL</label>
-        <input id="paypalPlanUrl" name="paypalPlanUrl" type="text" defaultValue={v(client?.paypalPlanUrl)} />
+        <Label htmlFor="paypalPlanUrl">PayPal plan URL</Label>
+        <Input id="paypalPlanUrl" name="paypalPlanUrl" type="text" defaultValue={v(client?.paypalPlanUrl)} />
       </div>
 
       <div className="field">
-        <label htmlFor="notes">Notes</label>
-        <textarea id="notes" name="notes" defaultValue={v(client?.notes)} />
+        <Label htmlFor="notes">Notes</Label>
+        <Textarea id="notes" name="notes" defaultValue={v(client?.notes)} />
       </div>
 
       <div className="field">
-        <label htmlFor="briefMd">Brief (markdown)</label>
-        <textarea
+        <Label htmlFor="briefMd">Brief (markdown)</Label>
+        <Textarea
           id="briefMd"
           name="briefMd"
           rows={10}

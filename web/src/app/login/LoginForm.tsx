@@ -5,6 +5,8 @@ import { loginAction, type LoginState } from "@/lib/authActions";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const INITIAL: LoginState = {};
 
@@ -23,8 +25,8 @@ export function LoginForm({ next }: { next: string }) {
           <form action={formAction}>
             <input type="hidden" name="next" value={next} />
             <div className="field">
-              <label htmlFor="password">Password</label>
-              <input
+              <Label htmlFor="password">Password</Label>
+              <Input
                 id="password"
                 name="password"
                 type="password"

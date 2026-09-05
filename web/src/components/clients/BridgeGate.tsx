@@ -3,6 +3,7 @@ import {
   logCheckinAction,
   toggleGateFlagAction,
 } from "@/lib/data/bridgeActions";
+import { Button } from "@/components/ui/button";
 import type { Client } from "@/lib/data/types";
 
 /**
@@ -40,9 +41,9 @@ export function BridgeGate({ client }: { client: Client }) {
                   name="value"
                   value={item.met ? "false" : "true"}
                 />
-                <button type="submit" className="btn btn-ghost btn-sm">
+                <Button type="submit" variant="ghost" size="sm">
                   {item.met ? "unmark" : "mark met"}
-                </button>
+                </Button>
               </form>
             ) : null}
           </li>
@@ -51,9 +52,9 @@ export function BridgeGate({ client }: { client: Client }) {
 
       <form action={logCheckinAction} className="gate-log">
         <input type="hidden" name="clientId" value={client.id} />
-        <button type="submit" className="btn btn-sm">
+        <Button type="submit" size="sm">
           Log zero-ask check-in
-        </button>
+        </Button>
         <span className="field-note">
           adds a timeline entry; tick “check-in landed” above once he replies
         </span>

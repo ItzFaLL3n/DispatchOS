@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { updateMrrGoalAction } from "@/lib/data/settingsActions";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import type { FormState } from "@/lib/data/errors";
 
 export function GoalPanel({
@@ -34,13 +35,9 @@ export function GoalPanel({
           <span className="goal-sep">/</span>
           <span className="goal-target">${mrrGoal.toLocaleString()}/mo</span>
         </div>
-        <button
-          type="button"
-          className="btn btn-ghost btn-sm"
-          onClick={() => setEditing((v) => !v)}
-        >
+        <Button type="button" variant="ghost" size="sm" onClick={() => setEditing((v) => !v)}>
           {editing ? "Cancel" : "Edit goal"}
-        </button>
+        </Button>
       </div>
       <div className="goal-bar-track">
         <div className="goal-bar-fill" style={{ width: `${pct}%` }} />
@@ -48,7 +45,7 @@ export function GoalPanel({
       <div className="goal-panel-pct">{pct}% to goal — active retainer MRR</div>
       {editing ? (
         <form action={formAction} className="goal-edit-form">
-          <input type="number" name="mrrGoal" defaultValue={mrrGoal} min={1} step={1} />
+          <Input type="number" name="mrrGoal" defaultValue={mrrGoal} min={1} step={1} className="w-32" />
           <Button type="submit" variant="default" size="sm" disabled={pending}>
             {pending ? "Saving…" : "Save"}
           </Button>

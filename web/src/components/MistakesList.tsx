@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { resolveMistakeAction } from "@/lib/data/eventActions";
+import { Button } from "@/components/ui/button";
 import type { RecentMistake } from "@/lib/data/events";
 
 export function MistakesList({ mistakes }: { mistakes: RecentMistake[] }) {
@@ -21,9 +22,9 @@ export function MistakesList({ mistakes }: { mistakes: RecentMistake[] }) {
           <form action={resolveMistakeAction} className="timeline-resolve">
             <input type="hidden" name="clientId" value={m.clientId} />
             <input type="hidden" name="eventId" value={m.id} />
-            <button type="submit" className="btn btn-ghost btn-sm">
+            <Button type="submit" variant="ghost" size="sm">
               Mark addressed
-            </button>
+            </Button>
           </form>
         </li>
       ))}

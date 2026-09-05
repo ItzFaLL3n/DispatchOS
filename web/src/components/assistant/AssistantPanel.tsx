@@ -2,6 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import type { ProposedAction } from "@/lib/assistant/guardrail";
 
 type ResolvedAction = {
@@ -173,65 +182,50 @@ export function AssistantPanel({
             {clientLabel ? <div className="assistant-scope">{clientLabel}</div> : null}
           </div>
           <div className="assistant-header-actions">
-            <div className="toggle-group">
-              <button
-                type="button"
-                className={`toggle-opt ${!autoMode ? "active" : ""}`}
-                onClick={() => setAutoMode(false)}
-              >
-                Confirm
-              </button>
-              <button
-                type="button"
-                className={`toggle-opt ${autoMode ? "active" : ""}`}
-                onClick={() => setAutoMode(true)}
-              >
-                Auto
-              </button>
-            </div>
-            <button
-              type="button"
-              className="assistant-clear"
+            <Tabs value={autoMode ? "auto" : "confirm"} onValueChange={(v) => setAutoMode(v === "auto")}>
+              <TabsList>
+                <TabsTrigger value="confirm">Confirm</TabsTrigger>
+                <TabsTrigger value="auto">Auto</TabsTrigger>
+              </TabsList>
+            </Tabs>
+            <Button
+              variant="outline"
+              size="sm"
               aria-label="Clear conversation"
               title="Clear conversation"
               onClick={handleClear}
               disabled={messages.length === 0}
             >
               Clear
-            </button>
-            <button type="button" className="assistant-close" aria-label="Close assistant" onClick={onClose}>
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Close assistant"
+              onClick={onClose}
+            >
               ×
-            </button>
+            </Button>
           </div>
         </div>
 
         <div className="assistant-mode-row">
-          <div className="toggle-group">
-            <button
-              type="button"
-              className={`toggle-opt ${mode === "chat" ? "active" : ""}`}
-              onClick={() => setMode("chat")}
-            >
-              Chat
-            </button>
-            <button
-              type="button"
-              className={`toggle-opt ${mode === "dm" ? "active" : ""}`}
-              onClick={() => setMode("dm")}
-            >
-              DM thread
-            </button>
-          </div>
-          <select
-            className="assistant-model-select"
-            value={model}
-            onChange={(e) => setModel(e.target.value as "sonnet" | "opus" | "haiku")}
-            aria-label="Model"
-          >
-            <option value="sonnet">Sonnet</option>
-            <option value="opus">Opus</option>
-            <option value="haiku">Haiku</option>
-          </select>
+          <Tabs value={mode} onValueChange={(v) => setMode(v as "chat" | "dm")}>
+            <TabsList>
+              <TabsTrigger value="chat">Chat</TabsTrigger>
+              <TabsTrigger value="dm">DM thread</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <Select value={model} onValueChange={(v) => setModel(v as "sonnet" | "opus" | "haiku")}>
+            <SelectTrigger size="sm" aria-label="Model">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="sonnet">Sonnet</SelectItem>
+              <SelectItem value="opus">Opus</SelectItem>
+              <SelectItem value="haiku">Haiku</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="assistant-messages">
@@ -274,7 +268,7 @@ export function AssistantPanel({
         {error ? <div className="form-error">{error}</div> : null}
 
         <div className="assistant-input-row">
-          <textarea
+          <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {

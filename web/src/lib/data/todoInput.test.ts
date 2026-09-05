@@ -52,6 +52,14 @@ describe("parseTodoForm — create", () => {
       }),
     ).toMatchObject({ clientId: "abc", groupId: null });
   });
+
+  it("treats the 'none' picker sentinel as null", () => {
+    expect(
+      parseTodoForm(form({ title: "x", clientId: "none", groupId: "none" }), {
+        mode: "create",
+      }),
+    ).toMatchObject({ clientId: null, groupId: null });
+  });
 });
 
 describe("parseTodoForm — update", () => {

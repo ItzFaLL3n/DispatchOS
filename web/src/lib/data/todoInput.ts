@@ -71,10 +71,14 @@ export function parseTodoForm(
   }
 
   const clientId = raw(fd, "clientId");
-  if (clientId !== undefined) out.clientId = clientId.trim() === "" ? null : clientId;
+  if (clientId !== undefined) {
+    out.clientId = clientId.trim() === "" || clientId === "none" ? null : clientId;
+  }
 
   const groupId = raw(fd, "groupId");
-  if (groupId !== undefined) out.groupId = groupId.trim() === "" ? null : groupId;
+  if (groupId !== undefined) {
+    out.groupId = groupId.trim() === "" || groupId === "none" ? null : groupId;
+  }
 
   return out;
 }

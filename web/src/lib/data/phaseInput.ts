@@ -37,7 +37,7 @@ export function parsePhaseForm(fd: FormData): PhasePatch {
 
   if (fd.has("phaseSubstate")) {
     const raw = String(fd.get("phaseSubstate") ?? "").trim();
-    if (raw === "") {
+    if (raw === "" || raw === "none") {
       patch.phaseSubstate = null;
     } else if ((PHASE_SUBSTATES as readonly string[]).includes(raw)) {
       patch.phaseSubstate = raw as PhaseSubstate;

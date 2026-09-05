@@ -636,12 +636,15 @@ textarea {
   color: var(--ink-faint);
   padding: 8px 10px;
   border-bottom: 1px solid var(--line-strong);
+  white-space: normal;
+  height: auto;
 }
 .table td {
   padding: 10px 10px;
   border-bottom: 1px solid var(--line);
   font-size: 13px;
   vertical-align: top;
+  white-space: normal;
 }
 .table tr:last-child td {
   border-bottom: none;

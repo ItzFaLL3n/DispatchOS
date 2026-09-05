@@ -1,13 +1,33 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import {
   createGroupAction,
   deleteGroupAction,
   updateGroupAction,
 } from "@/lib/data/groupActions";
 import { Button } from "@/components/ui/button";
-import { Modal } from "@/components/ui/Modal";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Stamp, type StampTone } from "@/components/ui/Stamp";
 import { GROUP_STATUSES } from "@/lib/data/types";
 import type { Group, GroupStatus } from "@/lib/data/types";
@@ -20,32 +40,49 @@ const STATUS_TONE: Record<GroupStatus, StampTone> = {
   "needs-review": "warn",
 };
 
-function DeleteGroupButton({ id, name }: { id: string; name: string }) {
-  const [open, setOpen] = useState(false);
-
+function GroupStatusSelect({ defaultValue, id }: { defaultValue: GroupStatus; id?: string }) {
   return (
-    <>
-      <Button variant="ghost" size="sm" className="btn-danger" onClick={() => setOpen(true)}>
-        Delete
-      </Button>
+    <Select defaultValue={defaultValue} name="status">
+      <SelectTrigger id={id} className="w-full">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {GROUP_STATUSES.map((s) => (
+          <SelectItem key={s} value={s}>
+            {s}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
 
-      {open ? (
-        <Modal title="Delete group" onClose={() => setOpen(false)}>
-          <p>
+function DeleteGroupButton({ id, name }: { id: string; name: string }) {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="ghost" size="sm">
+          Delete
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete group</AlertDialogTitle>
+          <AlertDialogDescription>
             Delete <strong>{name}</strong>? This cannot be undone.
-          </p>
-          <form action={deleteGroupAction} className="btn-row modal-actions">
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <form action={deleteGroupAction}>
             <input type="hidden" name="id" value={id} />
-            <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="destructive">
-              Delete group
-            </Button>
+            <AlertDialogAction asChild variant="destructive">
+              <button type="submit">Delete group</button>
+            </AlertDialogAction>
           </form>
-        </Modal>
-      ) : null}
-    </>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
 
@@ -62,28 +99,24 @@ function GroupRow({ group }: { group: Group }) {
         <form action={action} className="group-form">
           <input type="hidden" name="id" value={group.id} />
           <div className="field group-name-field">
-            <label>Name</label>
-            <input type="text" name="name" defaultValue={group.name} required />
+            <Label>Name</Label>
+            <Input type="text" name="name" defaultValue={group.name} required />
           </div>
           <div className="field">
-            <label>Status</label>
-            <select name="status" defaultValue={group.status}>
-              {GROUP_STATUSES.map((s) => (
-                <option key={s}>{s}</option>
-              ))}
-            </select>
+            <Label>Status</Label>
+            <GroupStatusSelect defaultValue={group.status} />
           </div>
           <div className="field">
-            <label>Rules URL</label>
-            <input type="text" name="rulesUrl" defaultValue={group.rulesUrl ?? ""} />
+            <Label>Rules URL</Label>
+            <Input type="text" name="rulesUrl" defaultValue={group.rulesUrl ?? ""} />
           </div>
           <div className="field">
-            <label>Last post</label>
-            <input type="date" name="lastPostDate" defaultValue={group.lastPostDate ?? ""} />
+            <Label>Last post</Label>
+            <Input type="date" name="lastPostDate" defaultValue={group.lastPostDate ?? ""} />
           </div>
           <div className="field group-notes-field">
-            <label>Rules notes</label>
-            <textarea name="rulesNotes" defaultValue={group.rulesNotes ?? ""} rows={2} />
+            <Label>Rules notes</Label>
+            <Textarea name="rulesNotes" defaultValue={group.rulesNotes ?? ""} rows={2} />
           </div>
           <div className="group-row-actions">
             <Button type="submit" size="sm" variant="default" disabled={pending}>
@@ -108,28 +141,24 @@ export function GroupList({ groups }: { groups: Group[] }) {
     <>
       <form action={createAction} className="group-form group-create">
         <div className="field group-name-field">
-          <label htmlFor="new-group-name">New group</label>
-          <input id="new-group-name" type="text" name="name" required autoComplete="off" />
+          <Label htmlFor="new-group-name">New group</Label>
+          <Input id="new-group-name" type="text" name="name" required autoComplete="off" />
         </div>
         <div className="field">
-          <label htmlFor="new-group-status">Status</label>
-          <select id="new-group-status" name="status" defaultValue="active">
-            {GROUP_STATUSES.map((s) => (
-              <option key={s}>{s}</option>
-            ))}
-          </select>
+          <Label htmlFor="new-group-status">Status</Label>
+          <GroupStatusSelect defaultValue="active" id="new-group-status" />
         </div>
         <div className="field">
-          <label htmlFor="new-group-url">Rules URL</label>
-          <input id="new-group-url" type="text" name="rulesUrl" />
+          <Label htmlFor="new-group-url">Rules URL</Label>
+          <Input id="new-group-url" type="text" name="rulesUrl" />
         </div>
         <div className="field">
-          <label htmlFor="new-group-last-post">Last post</label>
-          <input id="new-group-last-post" type="date" name="lastPostDate" />
+          <Label htmlFor="new-group-last-post">Last post</Label>
+          <Input id="new-group-last-post" type="date" name="lastPostDate" />
         </div>
         <div className="field group-notes-field">
-          <label htmlFor="new-group-notes">Rules notes</label>
-          <textarea id="new-group-notes" name="rulesNotes" rows={2} />
+          <Label htmlFor="new-group-notes">Rules notes</Label>
+          <Textarea id="new-group-notes" name="rulesNotes" rows={2} />
         </div>
         <div className="group-row-actions">
           <Button type="submit" size="sm" variant="default" disabled={creating}>

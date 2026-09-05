@@ -6,6 +6,15 @@ import { PHASE_LABELS } from "@/lib/data/types";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 import { Stamp } from "@/components/ui/Stamp";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { ContactWindow } from "@/components/ContactWindow";
 
 // Reads live pipeline data — never prerender.
@@ -25,9 +34,9 @@ export default async function ClientsPage() {
       <Panel
         title={`${clients.length} client${clients.length === 1 ? "" : "s"}`}
         actions={
-          <Link href="/clients/new" className="btn btn-primary btn-sm">
-            New client
-          </Link>
+          <Button variant="default" size="sm" asChild>
+            <Link href="/clients/new">New client</Link>
+          </Button>
         }
       >
         {clients.length === 0 ? (
@@ -36,43 +45,43 @@ export default async function ClientsPage() {
             (ticket 04), or add one with “New client”.
           </div>
         ) : (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Business</th>
-                <th>Contact</th>
-                <th>Their time</th>
-                <th>Phase</th>
-                <th>Retainer</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table className="table">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Business</TableHead>
+                <TableHead>Contact</TableHead>
+                <TableHead>Their time</TableHead>
+                <TableHead>Phase</TableHead>
+                <TableHead>Retainer</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {clients.map((c) => (
-                <tr key={c.id}>
-                  <td>
+                <TableRow key={c.id}>
+                  <TableCell>
                     <Link href={`/clients/${c.id}`}>{c.businessName}</Link>
-                  </td>
-                  <td>{c.contactName ?? "—"}</td>
-                  <td>
+                  </TableCell>
+                  <TableCell>{c.contactName ?? "—"}</TableCell>
+                  <TableCell>
                     <ContactWindow
                       variant="inline"
                       timezone={c.timezone}
                       operatorTz={operatorTz}
                     />
-                  </td>
-                  <td>
+                  </TableCell>
+                  <TableCell>
                     {c.phase} — {PHASE_LABELS[c.phase] ?? "?"}
                     {c.phaseSubstate ? ` · ${c.phaseSubstate}` : ""}
-                  </td>
-                  <td>
+                  </TableCell>
+                  <TableCell>
                     <Stamp tone={RETAINER_TONE[c.retainerStatus]}>
                       {c.retainerStatus}
                     </Stamp>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         )}
       </Panel>
     </>

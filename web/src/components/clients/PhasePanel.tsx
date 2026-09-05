@@ -3,13 +3,24 @@
 import { useActionState, useEffect, useState } from "react";
 import { applyPhaseAction, type FormState } from "@/lib/data/clientActions";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { BUILD_STATUSES, PHASE_LABELS } from "@/lib/data/types";
-import type { Client } from "@/lib/data/types";
+import type { BuildStatus, Client } from "@/lib/data/types";
 
 const PHASES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 export function PhasePanel({ client }: { client: Client }) {
   const [phase, setPhase] = useState(client.phase);
+  const [phaseSubstate, setPhaseSubstate] = useState(client.phaseSubstate ?? "");
+  const [buildStatus, setBuildStatus] = useState(client.buildStatus);
   const [state, formAction, pending] = useActionState<FormState, FormData>(
     applyPhaseAction,
     {},
@@ -36,40 +47,49 @@ export function PhasePanel({ client }: { client: Client }) {
 
       <div className="field-row">
         <div className="field">
-          <label htmlFor="phase">Phase</label>
-          <select
-            id="phase"
+          <Label htmlFor="phase">Phase</Label>
+          <Select
+            value={String(phase)}
+            onValueChange={(v) => setPhase(Number(v))}
             name="phase"
-            value={phase}
-            onChange={(e) => setPhase(Number(e.target.value))}
           >
-            {PHASES.map((p) => (
-              <option key={p} value={p}>
-                {p} — {PHASE_LABELS[p]}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger id="phase" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {PHASES.map((p) => (
+                <SelectItem key={p} value={String(p)}>
+                  {p} — {PHASE_LABELS[p]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="field">
           {substateOptions.length > 0 ? (
             <>
-              <label htmlFor="phaseSubstate">Sub-state</label>
-              <select
-                id="phaseSubstate"
+              <Label htmlFor="phaseSubstate">Sub-state</Label>
+              <Select
+                value={phaseSubstate}
+                onValueChange={setPhaseSubstate}
                 name="phaseSubstate"
-                defaultValue={client.phaseSubstate ?? ""}
               >
-                <option value="">none</option>
-                {substateOptions.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger id="phaseSubstate" className="w-full">
+                  <SelectValue placeholder="none" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">none</SelectItem>
+                  {substateOptions.map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {s}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </>
           ) : (
             <>
-              <label>Sub-state</label>
+              <Label>Sub-state</Label>
               <div className="field-note">only at phase 8 (bridge) or 9 (domain-trigger)</div>
             </>
           )}
@@ -78,8 +98,8 @@ export function PhasePanel({ client }: { client: Client }) {
 
       <div className="field-row">
         <div className="field">
-          <label htmlFor="nextActionAt">Next action — date</label>
-          <input
+          <Label htmlFor="nextActionAt">Next action — date</Label>
+          <Input
             id="nextActionAt"
             name="nextActionAt"
             type="date"
@@ -87,8 +107,8 @@ export function PhasePanel({ client }: { client: Client }) {
           />
         </div>
         <div className="field">
-          <label htmlFor="nextActionNote">Next action — note</label>
-          <input
+          <Label htmlFor="nextActionNote">Next action — note</Label>
+          <Input
             id="nextActionNote"
             name="nextActionNote"
             type="text"
@@ -99,8 +119,8 @@ export function PhasePanel({ client }: { client: Client }) {
 
       <div className="field-row">
         <div className="field">
-          <label htmlFor="doNotPitchUntil">Do not pitch until</label>
-          <input
+          <Label htmlFor="doNotPitchUntil">Do not pitch until</Label>
+          <Input
             id="doNotPitchUntil"
             name="doNotPitchUntil"
             type="date"
@@ -108,18 +128,23 @@ export function PhasePanel({ client }: { client: Client }) {
           />
         </div>
         <div className="field">
-          <label htmlFor="buildStatus">Build status</label>
-          <select
-            id="buildStatus"
+          <Label htmlFor="buildStatus">Build status</Label>
+          <Select
+            value={buildStatus}
+            onValueChange={(v) => setBuildStatus(v as BuildStatus)}
             name="buildStatus"
-            defaultValue={client.buildStatus}
           >
-            {BUILD_STATUSES.map((b) => (
-              <option key={b} value={b}>
-                {b}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger id="buildStatus" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {BUILD_STATUSES.map((b) => (
+                <SelectItem key={b} value={b}>
+                  {b}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 

@@ -2,7 +2,18 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Panel } from "@/components/ui/Panel";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import type { GeneratedPost, PostOfferType } from "@/lib/ai/templateGenerate";
 
 export type GroupOption = { id: string; label: string };
@@ -33,7 +44,7 @@ export function Creator({ groups }: { groups: GroupOption[] }) {
   const [spots, setSpots] = useState("2");
   const [costPhrase, setCostPhrase] = useState("free");
   const [extra, setExtra] = useState("");
-  const [groupId, setGroupId] = useState("");
+  const [groupId, setGroupId] = useState("none");
 
   const [generating, setGenerating] = useState(false);
   const [result, setResult] = useState<GeneratedPost | null>(null);
@@ -57,7 +68,7 @@ export function Creator({ groups }: { groups: GroupOption[] }) {
           spots: spots.trim() || "2",
           costPhrase,
           extra: extra.trim(),
-          groupId: groupId || null,
+          groupId: groupId === "none" ? null : groupId,
         }),
       });
       if (!res.ok) throw new Error("Generate failed");
@@ -83,28 +94,18 @@ export function Creator({ groups }: { groups: GroupOption[] }) {
       <Panel>
         <div className="creator-mode-row">
           <div className="panel-title">Generation mode</div>
-          <div className="toggle-group">
-            <button
-              type="button"
-              className={`toggle-opt ${mode === "ai" ? "active" : ""}`}
-              onClick={() => setMode("ai")}
-            >
-              Live AI
-            </button>
-            <button
-              type="button"
-              className={`toggle-opt ${mode === "template" ? "active" : ""}`}
-              onClick={() => setMode("template")}
-            >
-              Template
-            </button>
-          </div>
+          <Tabs value={mode} onValueChange={(v) => setMode(v as Mode)}>
+            <TabsList>
+              <TabsTrigger value="ai">Live AI</TabsTrigger>
+              <TabsTrigger value="template">Template</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
 
         <div className="field-row">
           <div className="field">
-            <label htmlFor="c-niche">Niche / audience</label>
-            <input
+            <Label htmlFor="c-niche">Niche / audience</Label>
+            <Input
               id="c-niche"
               type="text"
               value={niche}
@@ -112,25 +113,26 @@ export function Creator({ groups }: { groups: GroupOption[] }) {
             />
           </div>
           <div className="field">
-            <label htmlFor="c-offer">Offer</label>
-            <select
-              id="c-offer"
-              value={offerType}
-              onChange={(e) => setOfferType(e.target.value as PostOfferType)}
-            >
-              {OFFER_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
+            <Label htmlFor="c-offer">Offer</Label>
+            <Select value={offerType} onValueChange={(v) => setOfferType(v as PostOfferType)}>
+              <SelectTrigger id="c-offer" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {OFFER_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
         <div className="field-row">
           <div className="field">
-            <label htmlFor="c-spots">Spots available</label>
-            <input
+            <Label htmlFor="c-spots">Spots available</Label>
+            <Input
               id="c-spots"
               type="number"
               min={1}
@@ -140,34 +142,44 @@ export function Creator({ groups }: { groups: GroupOption[] }) {
             />
           </div>
           <div className="field">
-            <label htmlFor="c-cost">Cost phrasing</label>
-            <select id="c-cost" value={costPhrase} onChange={(e) => setCostPhrase(e.target.value)}>
-              {COST_OPTIONS.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+            <Label htmlFor="c-cost">Cost phrasing</Label>
+            <Select value={costPhrase} onValueChange={setCostPhrase}>
+              <SelectTrigger id="c-cost" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {COST_OPTIONS.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
         <div className="field-row">
           <div className="field">
-            <label htmlFor="c-group">Group (applies its posting rules)</label>
-            <select id="c-group" value={groupId} onChange={(e) => setGroupId(e.target.value)}>
-              <option value="">— none —</option>
-              {groups.map((g) => (
-                <option key={g.id} value={g.id}>
-                  {g.label}
-                </option>
-              ))}
-            </select>
+            <Label htmlFor="c-group">Group (applies its posting rules)</Label>
+            <Select value={groupId} onValueChange={setGroupId}>
+              <SelectTrigger id="c-group" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">— none —</SelectItem>
+                {groups.map((g) => (
+                  <SelectItem key={g.id} value={g.id}>
+                    {g.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
         <div className="field">
-          <label htmlFor="c-extra">Additional context</label>
-          <textarea
+          <Label htmlFor="c-extra">Additional context</Label>
+          <Textarea
             id="c-extra"
             value={extra}
             onChange={(e) => setExtra(e.target.value)}

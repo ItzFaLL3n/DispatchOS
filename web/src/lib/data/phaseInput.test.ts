@@ -26,6 +26,7 @@ describe("parsePhaseForm", () => {
   it("distinguishes an absent sub-state from a cleared one", () => {
     expect(parsePhaseForm(form({}))).not.toHaveProperty("phaseSubstate");
     expect(parsePhaseForm(form({ phaseSubstate: "" }))).toEqual({ phaseSubstate: null });
+    expect(parsePhaseForm(form({ phaseSubstate: "none" }))).toEqual({ phaseSubstate: null });
     expect(parsePhaseForm(form({ phaseSubstate: "bridge" }))).toEqual({
       phaseSubstate: "bridge",
     });

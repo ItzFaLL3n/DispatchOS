@@ -13,6 +13,7 @@ import { BridgeGate } from "@/components/clients/BridgeGate";
 import { ClientTodos } from "@/components/clients/ClientTodos";
 import { Timeline } from "@/components/clients/Timeline";
 import { DeleteClientButton } from "@/components/clients/DeleteClientButton";
+import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
 
@@ -38,9 +39,9 @@ export default async function ClientDetailPage({
         sub={`${client.slug} · phase ${client.phase} — ${PHASE_LABELS[client.phase] ?? "?"} · ${client.buildStatus}`}
       />
       <div className="btn-row record-toolbar">
-        <Link href="/clients" className="btn btn-ghost btn-sm">
-          ← All clients
-        </Link>
+        <Button variant="ghost" size="sm" asChild>
+          <Link href="/clients">← All clients</Link>
+        </Button>
       </div>
 
       <Panel title="Phase & sequence" className="stack-panel">

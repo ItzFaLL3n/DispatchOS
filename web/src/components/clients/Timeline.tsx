@@ -3,6 +3,15 @@
 import { useActionState } from "react";
 import { addEventAction, resolveSignalAction, resolveMistakeAction } from "@/lib/data/eventActions";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { USER_EVENT_KINDS } from "@/lib/data/types";
 import type { ClientEvent, EventKind } from "@/lib/data/types";
 import type { FormState } from "@/lib/data/errors";
@@ -64,18 +73,23 @@ export function Timeline({
         <input type="hidden" name="clientId" value={clientId} />
         <div className="field-row">
           <div className="field event-kind-field">
-            <label htmlFor="kind">Type</label>
-            <select id="kind" name="kind" defaultValue="note">
-              {USER_EVENT_KINDS.map((k) => (
-                <option key={k} value={k}>
-                  {KIND_LABEL[k]}
-                </option>
-              ))}
-            </select>
+            <Label htmlFor="kind">Type</Label>
+            <Select defaultValue="note" name="kind">
+              <SelectTrigger id="kind" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {USER_EVENT_KINDS.map((k) => (
+                  <SelectItem key={k} value={k}>
+                    {KIND_LABEL[k]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="field">
-            <label htmlFor="body">What happened</label>
-            <input id="body" name="body" type="text" required autoComplete="off" />
+            <Label htmlFor="body">What happened</Label>
+            <Input id="body" name="body" type="text" required autoComplete="off" />
           </div>
         </div>
         {state.error ? <div className="form-error">{state.error}</div> : null}
@@ -107,9 +121,9 @@ export function Timeline({
                   >
                     <input type="hidden" name="clientId" value={clientId} />
                     <input type="hidden" name="eventId" value={e.id} />
-                    <button type="submit" className="btn btn-ghost btn-sm">
+                    <Button type="submit" variant="ghost" size="sm">
                       {e.kind === "mistake" ? "Mark addressed" : "Mark resolved"}
-                    </button>
+                    </Button>
                   </form>
                 )
               ) : null}

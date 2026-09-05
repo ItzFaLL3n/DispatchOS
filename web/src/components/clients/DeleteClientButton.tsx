@@ -1,36 +1,45 @@
 "use client";
 
-import { useState } from "react";
 import { deleteClientAction } from "@/lib/data/clientActions";
 import { Button } from "@/components/ui/button";
-import { Modal } from "@/components/ui/Modal";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export function DeleteClientButton({ id, name }: { id: string; name: string }) {
-  const [open, setOpen] = useState(false);
-
   return (
-    <>
-      <Button variant="ghost" size="sm" onClick={() => setOpen(true)}>
-        Delete
-      </Button>
-
-      {open ? (
-        <Modal title="Delete client" onClose={() => setOpen(false)}>
-          <p>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="ghost" size="sm">
+          Delete
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete client</AlertDialogTitle>
+          <AlertDialogDescription>
             Delete <strong>{name}</strong>? This removes the client and its
             entire history. This cannot be undone.
-          </p>
-          <form action={deleteClientAction} className="btn-row modal-actions">
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <form action={deleteClientAction}>
             <input type="hidden" name="id" value={id} />
-            <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="destructive">
-              Delete client
-            </Button>
+            <AlertDialogAction asChild variant="destructive">
+              <button type="submit">Delete client</button>
+            </AlertDialogAction>
           </form>
-        </Modal>
-      ) : null}
-    </>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
