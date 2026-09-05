@@ -39,7 +39,7 @@ function DeleteGroupButton({ id, name }: { id: string; name: string }) {
             <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" variant="danger">
+            <Button type="submit" variant="destructive">
               Delete group
             </Button>
           </form>
@@ -86,7 +86,7 @@ function GroupRow({ group }: { group: Group }) {
             <textarea name="rulesNotes" defaultValue={group.rulesNotes ?? ""} rows={2} />
           </div>
           <div className="group-row-actions">
-            <Button type="submit" size="sm" variant="primary" disabled={pending}>
+            <Button type="submit" size="sm" variant="default" disabled={pending}>
               Save
             </Button>
             <DeleteGroupButton id={group.id} name={group.name} />
@@ -132,7 +132,7 @@ export function GroupList({ groups }: { groups: Group[] }) {
           <textarea id="new-group-notes" name="rulesNotes" rows={2} />
         </div>
         <div className="group-row-actions">
-          <Button type="submit" size="sm" variant="primary" disabled={creating}>
+          <Button type="submit" size="sm" variant="default" disabled={creating}>
             Add
           </Button>
         </div>

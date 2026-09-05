@@ -49,7 +49,7 @@ export function GoalPanel({
       {editing ? (
         <form action={formAction} className="goal-edit-form">
           <input type="number" name="mrrGoal" defaultValue={mrrGoal} min={1} step={1} />
-          <Button type="submit" variant="primary" size="sm" disabled={pending}>
+          <Button type="submit" variant="default" size="sm" disabled={pending}>
             {pending ? "Saving…" : "Save"}
           </Button>
           {state.error ? <span className="form-error">{state.error}</span> : null}

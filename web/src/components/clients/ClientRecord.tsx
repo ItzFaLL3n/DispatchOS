@@ -57,7 +57,7 @@ export function ClientRecord({
         <ClientFormFields client={client} />
         {state.error ? <div className="form-error">{state.error}</div> : null}
         <div className="btn-row">
-          <Button type="submit" variant="primary" disabled={pending}>
+          <Button type="submit" variant="default" disabled={pending}>
             {pending ? "Saving…" : "Save"}
           </Button>
           <Button type="button" variant="ghost" onClick={() => setEditing(false)}>
@@ -76,7 +76,7 @@ export function ClientRecord({
           contactHours={client.contactHours}
           operatorTz={operatorTz}
         />
-        <Button variant="primary" size="sm" onClick={() => setEditing(true)}>
+        <Button variant="default" size="sm" onClick={() => setEditing(true)}>
           Edit
         </Button>
       </div>

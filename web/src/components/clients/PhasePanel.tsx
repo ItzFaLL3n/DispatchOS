@@ -125,7 +125,7 @@ export function PhasePanel({ client }: { client: Client }) {
 
       {state.error ? <div className="form-error">{state.error}</div> : null}
       <div className="btn-row">
-        <Button type="submit" variant="primary" disabled={pending}>
+        <Button type="submit" variant="default" disabled={pending}>
           {pending ? "Saving…" : "Save phase"}
         </Button>
         {toast ? <span className="inline-toast">Saved</span> : null}

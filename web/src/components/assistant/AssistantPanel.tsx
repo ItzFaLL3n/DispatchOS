@@ -256,7 +256,7 @@ export function AssistantPanel({
                       <span className="stamp stamp-neutral">resolved</span>
                     ) : (
                       <div className="btn-row">
-                        <Button size="sm" variant="primary" onClick={() => handleApprove(ra.action, key)}>
+                        <Button size="sm" variant="default" onClick={() => handleApprove(ra.action, key)}>
                           Approve
                         </Button>
                         <Button size="sm" variant="ghost" onClick={() => handleReject(key)}>
@@ -290,7 +290,7 @@ export function AssistantPanel({
             }
             rows={mode === "dm" ? 6 : 2}
           />
-          <Button variant="primary" onClick={handleSend} disabled={sending || !input.trim()}>
+          <Button variant="default" onClick={handleSend} disabled={sending || !input.trim()}>
             {sending ? "…" : "Send"}
           </Button>
         </div>

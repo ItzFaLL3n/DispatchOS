@@ -34,7 +34,7 @@ export function LoginForm({ next }: { next: string }) {
               />
             </div>
             {state.error ? <div className="form-error">{state.error}</div> : null}
-            <Button type="submit" variant="primary" disabled={pending}>
+            <Button type="submit" variant="default" disabled={pending}>
               {pending ? "Checking…" : "Enter"}
             </Button>
           </form>

@@ -176,7 +176,7 @@ export function Creator({ groups }: { groups: GroupOption[] }) {
         </div>
 
         <div className="btn-row">
-          <Button variant="primary" onClick={handleGenerate} disabled={generating}>
+          <Button variant="default" onClick={handleGenerate} disabled={generating}>
             Generate post
           </Button>
           {generating ? <span className="creator-status">asking claude...</span> : null}

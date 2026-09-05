@@ -31,7 +31,7 @@ export default function NewClientPage() {
           <ClientFormFields />
           {state.error ? <div className="form-error">{state.error}</div> : null}
           <div className="btn-row">
-            <Button type="submit" variant="primary" disabled={pending}>
+            <Button type="submit" variant="default" disabled={pending}>
               {pending ? "Creating…" : "Create client"}
             </Button>
           </div>

@@ -80,7 +80,7 @@ export function Timeline({
         </div>
         {state.error ? <div className="form-error">{state.error}</div> : null}
         <div className="btn-row">
-          <Button type="submit" variant="primary" size="sm" disabled={pending}>
+          <Button type="submit" variant="default" size="sm" disabled={pending}>
             {pending ? "Adding…" : "Add to timeline"}
           </Button>
         </div>

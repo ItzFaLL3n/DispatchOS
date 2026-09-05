@@ -25,7 +25,7 @@ export function DeleteClientButton({ id, name }: { id: string; name: string }) {
             <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" variant="danger">
+            <Button type="submit" variant="destructive">
               Delete client
             </Button>
           </form>

@@ -96,7 +96,7 @@ function TodoRow({
         <LinkPicker name="clientId" label="Client" options={clients} value={todo.clientId} />
         <LinkPicker name="groupId" label="Group" options={groups} value={todo.groupId} />
         <div className="todo-row-actions">
-          <Button type="submit" size="sm" variant="primary" disabled={pending}>
+          <Button type="submit" size="sm" variant="default" disabled={pending}>
             Save
           </Button>
         </div>
@@ -156,7 +156,7 @@ export function TodoList({
         <LinkPicker name="clientId" label="Client" options={clients} />
         <LinkPicker name="groupId" label="Group" options={groups} />
         <div className="todo-row-actions">
-          <Button type="submit" size="sm" variant="primary" disabled={creating}>
+          <Button type="submit" size="sm" variant="default" disabled={creating}>
             Add
           </Button>
         </div>
