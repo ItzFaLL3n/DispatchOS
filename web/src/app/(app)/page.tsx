@@ -15,6 +15,7 @@ import { ContactWindow } from "@/components/ContactWindow";
 import { DashboardNags } from "@/components/DashboardNags";
 import { GoalPanel } from "@/components/GoalPanel";
 import { MistakesList } from "@/components/MistakesList";
+import { PipelineChart } from "@/components/PipelineChart";
 import type { Client } from "@/lib/data/types";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +33,11 @@ export default async function DashboardPage() {
   const currentMrr = clients
     .filter((c) => c.retainerStatus === "active")
     .reduce((sum, c) => sum + c.mrr, 0);
+
+  const phaseCounts: Record<number, number> = {};
+  for (const c of clients) {
+    phaseCounts[c.phase] = (phaseCounts[c.phase] ?? 0) + 1;
+  }
 
   const inBuild = clients.filter((c) => c.buildStatus !== "delivered");
   const byColumn = new Map<BoardColumn, Client[]>(
@@ -59,7 +65,11 @@ export default async function DashboardPage() {
         </Panel>
       </div>
 
-      <div className="board">
+      <Panel title="Pipeline by phase" className="stack-panel-top">
+        <PipelineChart counts={phaseCounts} />
+      </Panel>
+
+      <div className="board stack-panel-top">
         {BOARD_COLUMNS.map((col) => {
           const items = byColumn.get(col.key) ?? [];
           return (

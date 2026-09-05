@@ -79,6 +79,28 @@
   --sidebar-accent-foreground: var(--rail-text-active);
   --sidebar-border: var(--rail-line);
   --sidebar-ring: var(--accent);
+  /* bklit chart chrome — aliased to brand tokens, not shadcn's gray defaults. */
+  --chart-background: var(--card);
+  --chart-foreground: var(--ink);
+  --chart-foreground-muted: var(--ink-soft);
+  --chart-line-primary: var(--chart-1);
+  --chart-line-secondary: var(--chart-2);
+  --chart-crosshair: var(--ink-faint);
+  --chart-grid: var(--line);
+  --chart-brush-border: var(--line-strong);
+  --chart-tooltip-background: var(--ink);
+  --chart-tooltip-foreground: var(--card);
+  --chart-tooltip-muted: var(--ink-faint);
+  --chart-marker-background: var(--card);
+  --chart-marker-border: var(--line-strong);
+  --chart-marker-foreground: var(--ink);
+  --chart-label: var(--ink-soft);
+  --chart-scale-01: var(--accent-soft);
+  --chart-scale-02: color-mix(in oklab, var(--accent) 35%, var(--accent-soft));
+  --chart-scale-03: color-mix(in oklab, var(--accent) 60%, var(--accent-soft));
+  --chart-scale-04: color-mix(in oklab, var(--accent) 85%, var(--accent-soft));
+  --chart-scale-05: var(--accent);
+  --chart-scale-pattern-color: var(--paper-hover);
 }
 
 /* Expose the palette to Tailwind utilities (bg-paper, text-ink, …) without
@@ -141,6 +163,27 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --color-chart-scale-pattern-color: var(--chart-scale-pattern-color);
+  --color-chart-scale-05: var(--chart-scale-05);
+  --color-chart-scale-04: var(--chart-scale-04);
+  --color-chart-scale-03: var(--chart-scale-03);
+  --color-chart-scale-02: var(--chart-scale-02);
+  --color-chart-scale-01: var(--chart-scale-01);
+  --color-chart-label: var(--chart-label);
+  --color-chart-marker-foreground: var(--chart-marker-foreground);
+  --color-chart-marker-border: var(--chart-marker-border);
+  --color-chart-marker-background: var(--chart-marker-background);
+  --color-chart-tooltip-muted: var(--chart-tooltip-muted);
+  --color-chart-tooltip-foreground: var(--chart-tooltip-foreground);
+  --color-chart-tooltip-background: var(--chart-tooltip-background);
+  --chart-brush-border: var(--chart-brush-border);
+  --color-chart-grid: var(--chart-grid);
+  --color-chart-crosshair: var(--chart-crosshair);
+  --chart-line-secondary: var(--chart-line-secondary);
+  --chart-line-primary: var(--chart-line-primary);
+  --color-chart-foreground-muted: var(--chart-foreground-muted);
+  --color-chart-foreground: var(--chart-foreground);
+  --color-chart-background: var(--chart-background);
 }
 
 * {
@@ -1686,3 +1729,4 @@ textarea {
     @apply font-sans;
   }
 }
+
