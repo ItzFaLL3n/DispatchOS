@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { loginAction, type LoginState } from "@/lib/authActions";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 const INITIAL: LoginState = {};
 

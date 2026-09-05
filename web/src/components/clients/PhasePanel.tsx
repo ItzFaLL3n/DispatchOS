@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { applyPhaseAction, type FormState } from "@/lib/data/clientActions";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { BUILD_STATUSES, PHASE_LABELS } from "@/lib/data/types";
 import type { Client } from "@/lib/data/types";
 

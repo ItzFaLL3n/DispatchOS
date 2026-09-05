@@ -6,7 +6,7 @@ import {
   deleteTodoAction,
   updateTodoAction,
 } from "@/lib/data/todoActions";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Stamp, type StampTone } from "@/components/ui/Stamp";
 import { TODO_PRIORITIES, TODO_STATUSES } from "@/lib/data/types";
 import type { Todo, TodoPriority, TodoStatus } from "@/lib/data/types";

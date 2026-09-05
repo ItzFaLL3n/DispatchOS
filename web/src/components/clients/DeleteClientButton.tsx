@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { deleteClientAction } from "@/lib/data/clientActions";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/Modal";
 
 export function DeleteClientButton({ id, name }: { id: string; name: string }) {

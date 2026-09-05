@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Panel } from "@/components/ui/Panel";
 import type { GeneratedPost, PostOfferType } from "@/lib/ai/templateGenerate";
 

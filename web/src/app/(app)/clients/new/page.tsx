@@ -6,7 +6,7 @@ import { createClientAction, type FormState } from "@/lib/data/clientActions";
 import { ClientFormFields } from "@/components/clients/ClientFormFields";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 export default function NewClientPage() {
   const [state, formAction, pending] = useActionState<FormState, FormData>(

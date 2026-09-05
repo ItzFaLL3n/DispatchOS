@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { updateMrrGoalAction } from "@/lib/data/settingsActions";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import type { FormState } from "@/lib/data/errors";
 
 export function GoalPanel({

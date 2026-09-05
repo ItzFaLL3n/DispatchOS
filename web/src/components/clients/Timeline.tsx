@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { addEventAction, resolveSignalAction, resolveMistakeAction } from "@/lib/data/eventActions";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { USER_EVENT_KINDS } from "@/lib/data/types";
 import type { ClientEvent, EventKind } from "@/lib/data/types";
 import type { FormState } from "@/lib/data/errors";

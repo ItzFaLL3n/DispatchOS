@@ -6,7 +6,7 @@ import {
   deleteGroupAction,
   updateGroupAction,
 } from "@/lib/data/groupActions";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/Modal";
 import { Stamp, type StampTone } from "@/components/ui/Stamp";
 import { GROUP_STATUSES } from "@/lib/data/types";

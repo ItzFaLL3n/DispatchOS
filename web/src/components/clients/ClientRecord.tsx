@@ -4,7 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import { updateClientAction, type FormState } from "@/lib/data/clientActions";
 import { ClientFormFields } from "@/components/clients/ClientFormFields";
 import { ContactWindow } from "@/components/ContactWindow";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Stamp } from "@/components/ui/Stamp";
 import { BUILD_TONE, RETAINER_TONE } from "@/lib/clientDisplay";
 import type { Client } from "@/lib/data/types";
