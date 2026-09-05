@@ -54,4 +54,14 @@ describe("classifyAction — auto-eligible", () => {
       ).toBe("auto-eligible");
     }
   });
+
+  it("creating a client from a brief — no prior state to protect, even with retainerStatus set", () => {
+    expect(
+      classifyAction({
+        kind: "create",
+        entity: "client",
+        data: { businessName: "Acme Hauling", source: "fb-dm", offerType: "free-website", buildStatus: "not-started", retainerStatus: "not-pitched" },
+      }),
+    ).toBe("auto-eligible");
+  });
 });

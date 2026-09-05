@@ -1,9 +1,10 @@
 import "server-only";
 import { getSupabaseAdmin } from "@/lib/supabase";
-import { applyPhaseUpdate, deleteClient, updateClient } from "@/lib/data/clients";
+import { applyPhaseUpdate, createClient, deleteClient, updateClient } from "@/lib/data/clients";
 import { createClientEvent } from "@/lib/data/events";
 import { createTodo, deleteTodo } from "@/lib/data/todos";
 import { deleteGroup } from "@/lib/data/groups";
+import { slugify } from "@/lib/data/clientInput";
 import { actionClientId, planApply, summarizeAction } from "@/lib/assistant/applyPlan";
 import type { ProposedAction } from "@/lib/assistant/guardrail";
 import type { ParsedClientForm } from "@/lib/data/clientInput";
@@ -33,6 +34,8 @@ async function logAiActionEvent(clientId: string, body: string): Promise<void> {
  * itself — no redundant wrapper).
  */
 export async function applyAction(action: ProposedAction): Promise<void> {
+  let createdClientId: string | null = null;
+
   for (const step of planApply(action)) {
     switch (step.fn) {
       case "updateClient":
@@ -47,6 +50,12 @@ export async function applyAction(action: ProposedAction): Promise<void> {
       case "createClientEvent":
         await createClientEvent(step.clientId, step.kind as UserEventKind, step.body);
         break;
+      case "createClient": {
+        const data = step.data as ParsedClientForm & { businessName: string };
+        const created = await createClient({ ...data, slug: slugify(data.businessName) });
+        createdClientId = created.id;
+        break;
+      }
       case "deleteClient":
         await deleteClient(step.id);
         break;
@@ -61,7 +70,7 @@ export async function applyAction(action: ProposedAction): Promise<void> {
 
   if (action.kind === "create" && action.entity === "clientEvent") return; // already its own entry
 
-  const clientId = actionClientId(action);
+  const clientId = createdClientId ?? actionClientId(action);
   if (clientId) {
     await logAiActionEvent(clientId, summarizeAction(action));
   }

@@ -30,6 +30,10 @@ function describeAction(action: ProposedAction): string {
     const data = action.data as { kind?: string; body?: string };
     return `Log ${data.kind ?? "event"}: ${data.body ?? ""}`;
   }
+  if (action.kind === "create" && action.entity === "client") {
+    const data = action.data as { businessName?: string };
+    return `Create new client: ${data.businessName ?? "(unnamed)"}`;
+  }
   if (action.kind === "delete") {
     return `Delete ${action.entity} ${action.id}`;
   }
@@ -64,6 +68,7 @@ export function AssistantPanel({
   const [sending, setSending] = useState(false);
   const [autoMode, setAutoMode] = useState(false);
   const [mode, setMode] = useState<"chat" | "dm">("chat");
+  const [model, setModel] = useState<"sonnet" | "opus" | "haiku">("sonnet");
   const [error, setError] = useState<string | null>(null);
   const [resolvedKeys, setResolvedKeys] = useState<Set<string>>(new Set());
 
@@ -108,7 +113,7 @@ export function AssistantPanel({
       const res = await fetch("/api/assistant/message", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ clientId, message: text, autoMode, mode }),
+        body: JSON.stringify({ clientId, message: text, autoMode, mode, model }),
       });
       if (!res.ok) throw new Error("request failed");
       const data = (await res.json()) as { reply: string; actions: ResolvedAction[] };
@@ -149,8 +154,7 @@ export function AssistantPanel({
   if (!open) return null;
 
   return (
-    <div className="assistant-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="assistant-panel" role="dialog" aria-label="CRM assistant">
+    <div className="assistant-panel" role="complementary" aria-label="CRM assistant">
         <div className="assistant-panel-header">
           <div>
             <div className="panel-title">Assistant</div>
@@ -195,6 +199,18 @@ export function AssistantPanel({
             >
               DM thread
             </button>
+          </div>
+          <div className="toggle-group">
+            {(["sonnet", "opus", "haiku"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                className={`toggle-opt ${model === m ? "active" : ""}`}
+                onClick={() => setModel(m)}
+              >
+                {m[0].toUpperCase() + m.slice(1)}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -258,7 +274,6 @@ export function AssistantPanel({
             {sending ? "…" : "Send"}
           </Button>
         </div>
-      </div>
     </div>
   );
 }

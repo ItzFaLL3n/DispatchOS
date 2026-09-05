@@ -11,6 +11,7 @@ type RequestBody = {
   message: string;
   autoMode: boolean;
   mode?: "chat" | "dm";
+  model?: "sonnet" | "opus" | "haiku";
 };
 
 function isValidBody(body: unknown): body is RequestBody {
@@ -20,6 +21,7 @@ function isValidBody(body: unknown): body is RequestBody {
   if (typeof b.message !== "string" || !b.message.trim()) return false;
   if (typeof b.autoMode !== "boolean") return false;
   if (b.mode !== undefined && b.mode !== "chat" && b.mode !== "dm") return false;
+  if (b.model !== undefined && !["sonnet", "opus", "haiku"].includes(b.model)) return false;
   return true;
 }
 
@@ -58,6 +60,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       history: prior.map((m) => ({ role: m.role, content: m.content })),
       message: body.message,
       mode: body.mode ?? "chat",
+      model: body.model,
     });
   } catch {
     return NextResponse.json({ error: "Assistant call failed." }, { status: 502 });

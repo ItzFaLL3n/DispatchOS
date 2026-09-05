@@ -63,6 +63,12 @@ describe("planApply — creates", () => {
       { fn: "createClientEvent", clientId: "c1", kind: "touch", body: "called" },
     ]);
   });
+
+  it("client, from a brief", () => {
+    const data = { businessName: "Acme Hauling", source: "fb-dm", offerType: "free-website", buildStatus: "not-started" };
+    const action: ProposedAction = { kind: "create", entity: "client", data };
+    expect(planApply(action)).toEqual([{ fn: "createClient", data }]);
+  });
 });
 
 describe("planApply — deletes", () => {
@@ -90,6 +96,12 @@ describe("summarizeAction", () => {
       "AI created todo: a todo",
     );
   });
+
+  it("names the business for a client create", () => {
+    expect(
+      summarizeAction({ kind: "create", entity: "client", data: { businessName: "Acme Hauling" } }),
+    ).toBe("AI created this client from a pasted brief (Acme Hauling)");
+  });
 });
 
 describe("actionClientId", () => {
@@ -116,6 +128,12 @@ describe("actionClientId", () => {
         entity: "clientEvent",
         data: { clientId: "c1", kind: "note", body: "x" },
       }),
+    ).toBeNull();
+  });
+
+  it("null for a client create (no id exists yet — applyAction resolves the new id itself)", () => {
+    expect(
+      actionClientId({ kind: "create", entity: "client", data: { businessName: "Acme" } }),
     ).toBeNull();
   });
 });

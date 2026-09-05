@@ -12,7 +12,7 @@
 
 export type ProposedAction =
   | { kind: "update"; entity: "client"; id: string; fields: Record<string, unknown> }
-  | { kind: "create"; entity: "todo" | "clientEvent"; data: Record<string, unknown> }
+  | { kind: "create"; entity: "todo" | "clientEvent" | "client"; data: Record<string, unknown> }
   | { kind: "delete"; entity: "client" | "group" | "todo"; id: string };
 
 export type ActionClassification = "auto-eligible" | "always-confirm";

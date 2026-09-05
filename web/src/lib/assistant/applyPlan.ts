@@ -28,6 +28,7 @@ export type ApplyStep =
   | { fn: "applyPhaseUpdate"; id: string; patch: Record<string, unknown> }
   | { fn: "createTodo"; data: Record<string, unknown> }
   | { fn: "createClientEvent"; clientId: string; kind: string; body: string }
+  | { fn: "createClient"; data: Record<string, unknown> }
   | { fn: "deleteClient"; id: string }
   | { fn: "deleteGroup"; id: string }
   | { fn: "deleteTodo"; id: string };
@@ -68,6 +69,10 @@ export function planApply(action: ProposedAction): ApplyStep[] {
     return [{ fn: "createClientEvent", clientId: data.clientId, kind: data.kind, body: data.body }];
   }
 
+  if (action.kind === "create" && action.entity === "client") {
+    return [{ fn: "createClient", data: action.data }];
+  }
+
   return [];
 }
 
@@ -85,6 +90,10 @@ export function summarizeAction(action: ProposedAction): string {
   if (action.kind === "create" && action.entity === "todo") {
     const title = (action.data as { title?: string }).title ?? "a todo";
     return `AI created todo: ${title}`;
+  }
+  if (action.kind === "create" && action.entity === "client") {
+    const name = (action.data as { businessName?: string }).businessName ?? "a client";
+    return `AI created this client from a pasted brief (${name})`;
   }
   if (action.kind === "delete") {
     return `AI deleted a ${action.entity} record`;

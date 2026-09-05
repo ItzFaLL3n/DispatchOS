@@ -138,6 +138,31 @@ const proposeTools = [
     },
     async () => textResult({ proposed: true }),
   ),
+  tool(
+    "propose_create_client",
+    "Propose creating a brand-new client record — use this when the operator pastes a raw brief (a prospect's intake info) and wants it turned into a CRM record. Does not create it — queues a proposal. businessName, source, offerType, and buildStatus are required; infer everything else you can from the brief and leave the rest unset rather than guessing wildly.",
+    {
+      businessName: z.string(),
+      source: z.enum(["fb-comment", "fb-dm", "fb-post-reply", "other"]),
+      offerType: z.enum(["free-website", "free-review-agent", "both", "direct-pitch"]),
+      buildStatus: z.enum(["not-started", "in-progress", "delivered"]),
+      contactName: z.string().optional(),
+      location: z.string().optional(),
+      timezone: z.string().optional(),
+      contactHours: z.string().optional(),
+      retainerStatus: z
+        .enum(["not-pitched", "pitched", "deferred", "active", "declined"])
+        .optional(),
+      retainerTier: z.string().optional(),
+      mrr: z.number().optional(),
+      siteUrl: z.string().optional(),
+      domain: z.string().optional(),
+      paypalPlanUrl: z.string().optional(),
+      notes: z.string().optional(),
+      briefMd: z.string().optional(),
+    },
+    async () => textResult({ proposed: true }),
+  ),
 ];
 
 const crmServer = createSdkMcpServer({ name: "crm", tools: [...readTools, ...proposeTools] });
@@ -154,6 +179,7 @@ const ACTION_BUILDERS = {
     entity: "clientEvent",
     data: input,
   }),
+  mcp__crm__propose_create_client: (input) => ({ kind: "create", entity: "client", data: input }),
 };
 
 function buildPrompt(clientId, history, message) {
@@ -170,7 +196,14 @@ function buildPrompt(clientId, history, message) {
   return lines.join("\n\n");
 }
 
-async function handleMessage({ clientId, history, message, mode }) {
+// Aliases the panel can send; full model IDs also pass through untouched.
+const MODEL_ALIASES = {
+  sonnet: "claude-sonnet-5",
+  opus: "claude-opus-5",
+  haiku: "claude-haiku-4-5-20251001",
+};
+
+async function handleMessage({ clientId, history, message, mode, model: requestedModel }) {
   const proposedActions = [];
   let reply = "";
   let model = null;
@@ -180,6 +213,7 @@ async function handleMessage({ clientId, history, message, mode }) {
   const iter = query({
     prompt: buildPrompt(clientId, history, message),
     options: {
+      model: requestedModel ? (MODEL_ALIASES[requestedModel] ?? requestedModel) : undefined,
       tools: [],
       mcpServers: { crm: crmServer },
       systemPrompt: {

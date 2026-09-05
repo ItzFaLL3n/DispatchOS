@@ -18,6 +18,7 @@ export async function callWorker(input: {
   history: WorkerHistoryEntry[];
   message: string;
   mode: "chat" | "dm";
+  model?: "sonnet" | "opus" | "haiku";
 }): Promise<WorkerCallResult> {
   const res = await fetch(`${serverEnv.assistantWorkerUrl}/assistant/message`, {
     method: "POST",
